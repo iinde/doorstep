@@ -15,6 +15,7 @@
 </p>
 
 <p align="center">
+  <a href="#whats-new">What's new</a> ·
   <a href="#install-in-two-minutes">Install</a> ·
   <a href="#what-it-does">What it does</a> ·
   <a href="#screenshots">Screenshots</a> ·
@@ -35,6 +36,24 @@ It's free, it's open source, and nothing goes to us. There is no "us": no accoun
 </p>
 
 > **Unofficial.** Doorstep is not made by, endorsed by or connected to Ring or Amazon. It signs in to your own Ring account the same way Ring's apps do. See [the honest bit](#the-honest-bit).
+
+## What's new
+
+**0.5.1** · 18 November 2026
+- 🔎 **Search by what's in the picture.** Type *"dog"*, *"red van"* or *"man in a hat"* and Doorstep finds visits that look like it, using Apple's MobileCLIP on your Mac.
+
+**0.5.0**
+- ⚡️ **Instant alerts.** Rings pop up straight away: Doorstep now gets Ring's push alerts the same way Ring's own app does.
+- 🔋 **Battery saver.** Battery cameras show their latest picture until you click them, so opening Doorstep doesn't drain them.
+- ✏️ **Zones.** Draw your path or drive, and people on the pavement stop setting things off.
+- 🏠 **Home Assistant and Homebridge.** Who came, parcels, snapshots, battery and modes, over MQTT.
+- 📱 **Alerts on your phone** through ntfy, Pushover or Telegram, with the picture.
+- Plus loitering alerts, what visitors said, local AI with Ollama, camera health, chime snooze and Ring mode sync.
+
+**0.4.0**
+- 🛡️ **Everything Ring Protect does, on your Mac:** modes, one alert per visit, video descriptions, familiar faces, unusual activity, 24/7 recording. [See the comparison.](#doorstep-vs-ring-protect)
+
+Already installed? Doorstep updates itself. Every change: [CHANGELOG](CHANGELOG.md) · [Releases](https://github.com/iinde/doorstep/releases)
 
 ## Install in two minutes
 
