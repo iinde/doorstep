@@ -1,0 +1,38 @@
+name: Something's not working
+description: Report a bug or a crash
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "Thanks for taking the time. Please don't include passwords, tracking numbers, addresses, number plates or footage of real homes."
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Doorstep version
+      description: Settings › General › Updates shows it.
+      placeholder: "0.3.1"
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version and Mac
+      placeholder: "macOS 15.2 on a MacBook Air M2"
+  - type: input
+    id: cameras
+    attributes:
+      label: Which Ring cameras?
+      placeholder: "Video Doorbell (wired), Floodlight Cam"
+  - type: textarea
+    id: crash
+    attributes:
+      label: Crash report (if it crashed)
+      description: Console app › Crash Reports › newest "OpenRing" report. Paste it or attach the file.
+      render: text

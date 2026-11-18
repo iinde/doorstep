@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and help
+    url: https://github.com/iinde/doorstep/discussions
+    about: Ask anything in Discussions
+  - name: Security problem
+    url: https://github.com/iinde/doorstep/security/advisories/new
+    about: Please report security problems privately

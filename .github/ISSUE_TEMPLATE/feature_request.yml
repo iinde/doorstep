@@ -1,0 +1,11 @@
+name: Idea or feature
+description: Suggest something new
+labels: [idea]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like Doorstep to do?
+      description: Tell us the situation, not just the solution. "When the bin men come I want…"
+    validations:
+      required: true
