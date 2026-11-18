@@ -564,6 +564,9 @@ private struct MomentDetail: View {
                     }
                     Spacer()
                     whoMenu
+                    if let clipURL {
+                        ShareLink(item: clipURL) { Label("Share", systemImage: "square.and.arrow.up") }
+                    }
                     Button {
                         saveClip()
                     } label: {
@@ -575,8 +578,14 @@ private struct MomentDetail: View {
                 if fromMac {
                     Label("Recorded on this Mac", systemImage: "internaldrive").font(DS.meta).foregroundStyle(DS.porchlight)
                 }
+                Text(VideoDescription.text(for: current ?? moment.headline))
+                    .font(DS.body).foregroundStyle(DS.paper)
+                    .fixedSize(horizontal: false, vertical: true)
                 if let line = identityLine {
                     Text(line).font(DS.meta).foregroundStyle(DS.ash)
+                }
+                if FaceIndex.isEnabled, !DemoMode.isOn {
+                    FacesInClip(eventId: (current ?? moment.headline).id)
                 }
 
                 if moment.events.count > 1 {
@@ -768,6 +777,7 @@ private struct LocalClipDetail: View {
                             .font(DS.body).foregroundStyle(DS.ash)
                     }
                     Spacer()
+                    ShareLink(item: clip.url) { Label("Share", systemImage: "square.and.arrow.up") }
                     Button { NSWorkspace.shared.activateFileViewerSelecting([clip.url]) } label: {
                         Label("Show in Finder", systemImage: "folder")
                     }

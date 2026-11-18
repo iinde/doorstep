@@ -402,6 +402,8 @@ final class AppState: ObservableObject {
         let doorbells = Set(devices.filter { $0.deviceType == .doorbell }.map { String($0.id) })
         ParcelStore.shared.link(moments: MomentBuilder.build(from: events), doorbellKeys: doorbells)
         Task { await DailyBrief.sendIfDue(events: events) }
+        Modes.shared.ensureDefaults(for: devices)
+        Modes.shared.tick()
         let moments = MomentBuilder.build(from: events)
         Task { await RainWatch.shared.check(moments: moments) }
         // Recording on this Mac (no Ring subscription needed) and battery-camera stills.
@@ -611,6 +613,8 @@ struct SettingsView: View {
                 .tabItem { Label("Parcels", systemImage: "shippingbox") }
             RecordingSettings(devices: appState.devices)
                 .tabItem { Label("Recording", systemImage: "record.circle") }
+            AlertsSettings(devices: appState.devices)
+                .tabItem { Label("Alerts", systemImage: "bell.badge") }
             AutomationsSettings(devices: appState.devices)
                 .tabItem { Label("Automations", systemImage: "bolt.horizontal.circle") }
             AccountSettings()

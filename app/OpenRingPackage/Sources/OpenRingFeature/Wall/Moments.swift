@@ -53,6 +53,9 @@ public struct Moment: Identifiable, Sendable {
 
     public var title: String {
         if parcelTaken { return "Parcel taken from \(deviceName)" }
+        if let face = events.lazy.compactMap({ FaceIndex.shared.names(for: $0.id).first }).first {
+            return tier == .doorbell ? "\(face) rang \(deviceName)" : "\(face) at \(deviceName)"
+        }
         if tier != .doorbell, sounds.contains(.knock) { return "Someone knocked at \(deviceName)" }
         if sounds.contains(.glass) { return "Glass breaking at \(deviceName)" }
         if let who = identity?.who {

@@ -72,8 +72,17 @@ More help: [Getting started](docs/guides/getting-started.md) · [Why the "Open A
 - **Every delivery is matched to the clip** of it arriving, so you can watch the moment it came.
 - **Rain warning** if a parcel's been left out in the rain.
 
+### Alerts that make sense
+- **Choose what alerts you**: the doorbell, people, parcels, vehicles, animals, familiar faces, unusual activity, or any movement.
+- **One alert per visit.** The courier who walks up, rings and leaves doesn't send you five notifications; the same alert updates.
+- **Every alert says what happened** in a plain sentence: *"A DPD courier walked up to the front door, rang the doorbell and left a parcel."*
+- **Home, Away, Night and Quiet modes**, like an alarm panel: each decides which cameras alert you and which record. Switch from the Wall, on a schedule, or with *"Set Doorstep to Away"*.
+- **Familiar faces** (off unless you switch it on): name the people you know and get *"Mum is at the front door"*.
+- **Unusual activity**: someone in the garden at 3am, when that never happens, gets flagged.
+
 ### Record without a Ring subscription
 - **Your Mac becomes the recorder.** Without Ring's subscription, Ring keeps no video at all. Doorstep can keep chosen cameras live, spot people itself, and save each visit with the few seconds *before* it, to a folder you choose (a network drive works).
+- **24/7 recording** on wired cameras, in 10-minute files, kept for as long as you choose (up to "until I delete them").
 - **Time-lapse for battery cameras**: a still every few minutes, turned into a video of the day.
 - **Your day in 60 seconds**: one button makes a short video of everyone who came, with times on screen.
 
@@ -96,6 +105,32 @@ More help: [Getting started](docs/guides/getting-started.md) · [Why the "Open A
 
 Every feature, explained: **[the guides](docs/guides/README.md)**.
 
+## Doorstep vs Ring Protect
+
+Ring's subscription plans add recording and "intelligent" features to your cameras. Doorstep does almost all of it on your Mac, for free. It doesn't replace your Ring subscription if you have one: it works alongside it.
+
+| Ring Protect feature (Solo £4.99 · Multi £7.99 · Pro £15.99 a month) | Doorstep |
+|---|---|
+| Video recording and history (up to 180 days) | ✅ Recorded on your Mac, kept as long as you like |
+| 24/7 continuous recording (+£3/month per camera) | ✅ Wired cameras |
+| Person, package and vehicle alerts | ✅ Plus animals, sounds and couriers by name |
+| Extended live view | ✅ No time limit |
+| Device modes (Home, Away…) | ✅ Home, Away, Night, Quiet |
+| Doorbell calls | ✅ |
+| Multi-camera live view | ✅ |
+| Live view picture-in-picture | ✅ |
+| Video preview alerts | ✅ A picture in every alert |
+| Daily event summary | ✅ |
+| Video descriptions (Pro) | ✅ On your Mac |
+| Single event alerts (Pro) | ✅ |
+| Video search (Pro) | ✅ |
+| Familiar faces (Pro) | ✅ On your Mac, opt-in |
+| Unusual event alerts (Pro) | ✅ |
+| Save and share clips | ✅ |
+| **Not in Ring Protect:** courier names, knock detection, parcel tracking, a map and radar of your cameras, Shortcuts automations, number plates, "your day in 60 seconds" | ✅ |
+| Guard response, alarm call-outs, cellular backup | ❌ These need people and alarm hardware |
+| Recording while your Mac is off | ❌ Doorstep records on your Mac, so it needs to be on. Ring records in its cloud. |
+
 ## Screenshots
 
 > These pictures come from Doorstep's demo mode, with drawn cameras instead of a real home.
@@ -116,6 +151,10 @@ Every feature, explained: **[the guides](docs/guides/README.md)**.
 <tr>
 <td><img src="docs/images/expect.png" alt="I'm expecting a parcel form"><br><sub><b>"I'm expecting a parcel."</b> One number, Doorstep does the rest.</sub></td>
 <td><img src="docs/images/automations.png" alt="Automations settings"><br><sub><b>Automations.</b> Your door, wired into Shortcuts.</sub></td>
+</tr>
+<tr>
+<td><img src="docs/images/alerts-modes.png" alt="Alert choices and modes"><br><sub><b>Alerts and modes.</b> Only what matters, in the way you want it.</sub></td>
+<td></td>
 </tr>
 <tr>
 <td><img src="docs/images/call-panel.png" alt="Doorbell call panel"><br><sub><b>Someone's coming.</b> The door, before they ring.</sub></td>

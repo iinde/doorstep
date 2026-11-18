@@ -60,6 +60,7 @@ public final class LocalClipStore: ObservableObject {
     /// Delete recordings older than the retention setting.
     public func prune() {
         let days = UserDefaults.standard.object(forKey: "recordKeepDays") as? Int ?? 14
+        guard days > 0 else { return }   // 0 = keep until I delete them
         let cutoff = Date().addingTimeInterval(-Double(days) * 86400)
         let old = clips.filter { $0.start < cutoff }
         for c in old { try? FileManager.default.removeItem(at: c.url) }
@@ -212,9 +213,24 @@ final class CameraRecorder: NSObject, RTCVideoRenderer, @unchecked Sendable {
         guard w.status == .completed else { try? FileManager.default.removeItem(at: url); return }
         segments.append((url, start, end))
 
+        // 24/7: keep everything, in 10-minute files.
+        let continuous = (UserDefaults.standard.array(forKey: "continuousCameras") as? [Int] ?? []).contains(device.id)
+        if continuous && keepUntil == nil {
+            keepUntil = .distantFuture
+            keptReason = "Continuous"
+            kept = []
+        } else if !continuous && keepUntil == .distantFuture {
+            keepUntil = Date()   // switched off: finish what we have
+        }
+
         if let until = keepUntil {
             kept.append((url, start, end))
-            if Date() > until {
+            let span = (kept.last?.2 ?? end).timeIntervalSince(kept.first?.1 ?? start)
+            if continuous && span >= 600 {
+                let clip = kept
+                kept = []
+                finish(clip, reason: "Continuous")
+            } else if Date() > until {
                 let clip = kept
                 let reason = keptReason
                 keepUntil = nil
@@ -283,6 +299,7 @@ public final class RecorderController: ObservableObject {
     /// Which cameras record: chosen in Settings; by default every camera that isn't on batteries.
     public static func chosen(from devices: [RingDevice]) -> [RingDevice] {
         let cams = devices.filter { $0.deviceType == .doorbell || $0.deviceType == .camera }
+        if let byMode = Modes.shared.recordingCameras() { return cams.filter { byMode.contains($0.id) } }
         if let ids = UserDefaults.standard.array(forKey: "recordDevices") as? [Int] {
             return cams.filter { ids.contains($0.id) }
         }

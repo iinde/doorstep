@@ -7,6 +7,7 @@ Start here if you're new:
 Then, whatever you're interested in:
 
 - **[Watching your cameras](watching.md)**: the Wall, the doorbell pop-up, talking, floating a camera, keyboard shortcuts.
+- **[Alerts and modes](alerts-and-modes.md)**: what alerts you, one alert per visit, Home/Away/Night, familiar faces, descriptions.
 - **[Who was it?](who-was-it.md)**: couriers by name, teaching it, knocks and dogs, number plates, search.
 - **[Parcels](parcels.md)**: "I'm expecting a parcel", tracking, delivery emails, rain warnings.
 - **[Recording without a subscription](recording.md)**: your Mac as the recorder, time-lapse, "Your day in 60 seconds".

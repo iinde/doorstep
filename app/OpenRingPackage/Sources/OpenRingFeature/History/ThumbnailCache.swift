@@ -120,6 +120,9 @@ public actor ThumbnailCache {
             if !heard.isEmpty { NSLog("👂 \(ev?.deviceName ?? "?"): \(heard.map(\.rawValue))") }
         }
 
+        // Familiar faces (opt-in): only people you've named.
+        if found.contains("Person") { FaceIndex.shared.recognise(eventId: eventId, frames: frames) }
+
         // Who was it, and did a parcel arrive or go? Only worth it when someone's in shot.
         if found.contains("Person") || found.contains("Vehicle") || found.contains("Parcel") {
             var first: CGImage?, last: CGImage?
@@ -164,6 +167,11 @@ public actor ThumbnailCache {
         }
         id.parcelLeft = left
         id.parcelTaken = taken
+        // Which way were they going? Tallest person in the first and last frames read.
+        let heights = people.map { $0.map(\.height).max() ?? 0 }.filter { $0 > 0 }
+        if let a = heights.first, let b = heights.last, heights.count >= 2 {
+            id.movement = b > a * 1.25 ? "approaching" : b < a * 0.8 ? "leaving" : nil
+        }
         if left { id.isDelivery = true }
         if let c = id.carrier { NSLog("🪪 \(camera): \(c.rawValue) via \(id.source.rawValue) (\(id.confidence))") }
         if left || taken { NSLog("📦 \(camera): parcel \(left ? "left" : "taken")") }

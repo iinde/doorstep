@@ -22,6 +22,9 @@
 - [How do I know an update is really from you?](#how-do-i-know-an-update-is-really-from-you)
 
 **Features**
+- [Does it do everything Ring Protect does?](#does-it-do-everything-ring-protect-does)
+- [How do modes work?](#how-do-modes-work)
+- [How do familiar faces work?](#how-do-familiar-faces-work)
 - [How does it know it was DPD?](#how-does-it-know-it-was-dpd)
 - [It got it wrong. How do I correct it?](#it-got-it-wrong-how-do-i-correct-it)
 - [How does recording without a subscription work?](#how-does-recording-without-a-subscription-work)
@@ -108,6 +111,15 @@ Recording your own property is generally fine. If your cameras can see beyond it
 Every update is signed with Doorstep's private key, and the app checks that signature (and Apple's code signature) before installing anything. A tampered or fake update is refused.
 
 ## Features
+
+### Does it do everything Ring Protect does?
+Nearly. Recording (including 24/7), smart alerts, modes, video descriptions, single event alerts, video search, familiar faces, unusual activity alerts, the daily summary, picture-in-picture and sharing clips are all in Doorstep, worked out on your Mac. What it can't do: Ring's guard response and alarm services (they need people and alarm hardware), and recording while your Mac is switched off (Ring records in its cloud). There's a full comparison in the [README](README.md#doorstep-vs-ring-protect).
+
+### How do modes work?
+Turn on **Settings › Alerts › Use modes**. There are four: **Home**, **Away**, **Night** and **Quiet**. For each one you tick which cameras alert you and which record. Switch modes from the menu on the Wall, let Doorstep switch to Night and back on a schedule, or ask Siri: *"Set Doorstep to Away"*. Doorbell rings always come through except in Quiet. You can also switch modes from a Shortcut, for example when you leave home.
+
+### How do familiar faces work?
+It's off until you switch it on in **Settings › Alerts › Familiar faces**. Open a visit in History, choose **Find faces in this clip**, and type a name under the face (*"Mum"*). From then on Doorstep compares faces in new clips with the ones you've named, on your Mac, and tells you *"Mum is at the front door"*. Only faces you name are kept; nobody else's face is stored. It's a beta: it's cautious, so it may miss someone rather than mistake them.
 
 ### How does it know it was DPD?
 It reads. When a clip has a person or vehicle in it, Doorstep looks at a few frames and reads any writing (van sides, jackets, bags), then matches it against carrier names like DPD, Royal Mail, Amazon, Evri, DHL, UPS, FedEx, Yodel and the supermarkets. It also knows a few liveries by colour. All on your Mac. At night the cameras see in black and white and writing is harder to read, so it may say "Delivery driver" instead.

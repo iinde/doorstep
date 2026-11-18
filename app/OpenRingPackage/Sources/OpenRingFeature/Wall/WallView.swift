@@ -104,6 +104,7 @@ public struct WallView: View {
                 .font(DS.body)
                 .foregroundStyle(DS.ash)
             Spacer()
+            ModeMenu()
             todaySummary
             Button {
                 openWindow(id: "command")

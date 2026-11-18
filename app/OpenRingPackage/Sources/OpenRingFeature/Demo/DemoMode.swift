@@ -89,7 +89,10 @@ public enum DemoData {
             guard let e = event(id: id, at: Date().addingTimeInterval(-Double(s.minutesAgo) * 60), device: s.device,
                                 kind: s.kind, person: s.person) else { continue }
             events.append(e)
-            if let ident = s.identity { IdentityIndex.shared.set(id, ident) }
+            var ident = s.identity ?? (s.person ? Identity(carrier: nil, isDelivery: false, confidence: 0, source: .text) : nil)
+            ident?.movement = i % 3 == 2 ? "leaving" : "approaching"
+            if let ident { IdentityIndex.shared.set(id, ident) }
+            if s.kind == "ding" && s.identity == nil { FaceIndex.shared.setDemo(id, "Mum") }
             if !s.sounds.isEmpty { SoundIndex.shared.set(id, s.sounds) }
         }
         // Thirteen earlier days: mornings and evenings busy, nights quiet, the postie mid-morning.
@@ -132,6 +135,10 @@ public enum DemoData {
                                         body: "Your order from Currys has been delivered. Parcel number 15501234567890.",
                                         date: Date().addingTimeInterval(-Double(today.first { $0.identity?.carrier == .dpd }?.minutesAgo ?? 300) * 60)))
         store.link(moments: MomentBuilder.build(from: events), doorbellKeys: [String(porch)])
+
+        // Modes on, at Home (in memory only).
+        Modes.shared.enabled = true
+        Modes.shared.ensureDefaults(for: devices)
 
         // Example automations (in memory only).
         Automations.shared.rules = [

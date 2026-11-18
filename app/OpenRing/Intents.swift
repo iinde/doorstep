@@ -61,6 +61,27 @@ struct ParcelsTodayIntent: AppIntent {
     }
 }
 
+enum ModeChoice: String, AppEnum {
+    case home = "Home", away = "Away", night = "Night", quiet = "Quiet"
+    static let typeDisplayRepresentation: TypeDisplayRepresentation = "Mode"
+    static let caseDisplayRepresentations: [ModeChoice: DisplayRepresentation] = [
+        .home: "Home", .away: "Away", .night: "Night", .quiet: "Quiet"]
+}
+
+struct SetModeIntent: AppIntent {
+    static let title: LocalizedStringResource = "Set Doorstep Mode"
+    static let description = IntentDescription("Home, Away, Night or Quiet: which cameras alert and record.")
+    @Parameter(title: "Mode") var mode: ModeChoice
+
+    @MainActor
+    func perform() async throws -> some IntentResult & ProvidesDialog {
+        let m: Modes.Mode = [.home: .home, .away: .away, .night: .night, .quiet: .off][mode]!
+        Modes.shared.enabled = true
+        Modes.shared.current = m
+        return .result(dialog: "Doorstep is set to \(m.rawValue).")
+    }
+}
+
 struct DoorstepShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(intent: ShowCameraIntent(), phrases: ["Show \(\.$camera) in \(.applicationName)",
@@ -69,6 +90,9 @@ struct DoorstepShortcuts: AppShortcutsProvider {
         AppShortcut(intent: TodayAtHomeIntent(), phrases: ["What happened at home in \(.applicationName)",
                                                            "Who came today in \(.applicationName)"],
                     shortTitle: "Today at Home", systemImageName: "house")
+        AppShortcut(intent: SetModeIntent(), phrases: ["Set \(.applicationName) to \(\.$mode)",
+                                                       "Switch \(.applicationName) to \(\.$mode)"],
+                    shortTitle: "Set Mode", systemImageName: "house")
         AppShortcut(intent: ParcelsTodayIntent(), phrases: ["Any parcels today in \(.applicationName)"],
                     shortTitle: "Parcels Today", systemImageName: "shippingbox")
     }

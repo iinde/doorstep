@@ -12,6 +12,7 @@ public struct RecordingSettings: View {
     @AppStorage("snapshotMinutes") private var snapshotMinutes = 5
     @AppStorage("recordFolder") private var folderPath = ""
     @State private var chosen: Set<Int> = []
+    @State private var continuous: Set<Int> = Set(UserDefaults.standard.array(forKey: "continuousCameras") as? [Int] ?? [])
     @ObservedObject private var store = LocalClipStore.shared
 
     public init(devices: [RingDevice]) { self.devices = devices }
@@ -52,6 +53,22 @@ public struct RecordingSettings: View {
             }
 
             Section {
+                ForEach(cameras.filter { !$0.isBatteryPowered }, id: \.id) { d in
+                    Toggle(d.name, isOn: Binding(
+                        get: { continuous.contains(d.id) },
+                        set: { on in
+                            if on { continuous.insert(d.id) } else { continuous.remove(d.id) }
+                            UserDefaults.standard.set(Array(continuous), forKey: "continuousCameras")
+                        }))
+                    .disabled(!enabled || !chosen.contains(d.id))
+                }
+            } header: {
+                Text("24/7 recording")
+            } footer: {
+                Text("Records everything from these cameras, not just visits, in 10-minute files. Uses roughly 1 to 2 GB per camera per day, so pick a big drive and a sensible \"Keep recordings for\". Wired cameras only.")
+            }
+
+            Section {
                 Toggle("Take a still from battery cameras", isOn: $snapshots)
                 Picker("Every", selection: $snapshotMinutes) {
                     ForEach([2, 5, 10, 15, 30], id: \.self) { Text("\($0) minutes").tag($0) }
@@ -73,7 +90,8 @@ public struct RecordingSettings: View {
                     }
                 }
                 Picker("Keep recordings for", selection: $keepDays) {
-                    ForEach([3, 7, 14, 30, 90], id: \.self) { Text("\($0) days").tag($0) }
+                    ForEach([3, 7, 14, 30, 90, 180, 365], id: \.self) { Text("\($0) days").tag($0) }
+                    Text("Until I delete them").tag(0)
                 }
                 LabeledContent("Using", value: "\(store.clips.count) clips, " +
                                ByteCountFormatter.string(fromByteCount: store.totalBytes, countStyle: .file))

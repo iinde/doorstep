@@ -56,25 +56,34 @@ public final class NotificationManager: NSObject, UNUserNotificationCenterDelega
         let camera = event.deviceName ?? "your door"
         let identity = IdentityIndex.shared.identity(event.id)
         let tier = MomentTier.of(event)
+        let tags = await ThumbnailCache.shared.tags(for: event.id) ?? []
+        let familiar = FaceIndex.shared.names(for: event.id).first
+        let unusual = AlertPolicy.isUnusual(event)
+        let kinds = AlertPolicy.kinds(for: event, identity: identity, tags: tags, familiar: familiar, unusual: unusual)
+        // The headline: the most important thing about it.
         if identity?.parcelTaken == true {
-            content.title = "Parcel taken"
-            content.body = "A parcel was taken from \(camera)."
+            content.title = "Parcel taken from \(camera)"
+        } else if let familiar {
+            content.title = event.kind == .ding ? "\(familiar) rang" : "\(familiar) is at \(camera)"
         } else if let who = identity?.who {
-            content.title = event.kind == .ding ? "\(who) rang" : who
-            content.body = identity?.parcelLeft == true ? "Left a parcel at \(camera)." : "At \(camera)."
+            content.title = event.kind == .ding ? "\(who) rang" : "\(who) at \(camera)"
         } else if identity?.parcelLeft == true {
-            content.title = "Parcel left"
-            content.body = "Something was left at \(camera)."
+            content.title = "Parcel left at \(camera)"
         } else if event.kind == .ding {
-            content.title = "Someone rang"
-            content.body = "At \(camera)."
+            content.title = "Someone rang \(camera)"
+        } else if unusual {
+            content.title = "Unusual: someone at \(camera)"
         } else if tier == .people {
             content.title = "Person at \(camera)"
-            content.body = "Someone was seen."
+        } else if tags.contains("Vehicle") {
+            content.title = "Vehicle at \(camera)"
+        } else if kinds.contains(.animals) {
+            content.title = "Animal at \(camera)"
         } else {
-            content.title = "Activity"
-            content.body = "Movement at \(camera)."
+            content.title = "Movement at \(camera)"
         }
+        // The body: a plain sentence describing the clip.
+        content.body = VideoDescription.text(for: event, tags: tags)
         if UserDefaults.standard.object(forKey: "notificationSound") as? Bool ?? true { content.sound = .default }
 
         // Automations and announcements (doorbell presses fire from the faster doorbell watch).
@@ -85,7 +94,8 @@ public final class NotificationManager: NSObject, UNUserNotificationCenterDelega
             if let who = identity?.who, identity?.isDelivery == true { a.fire(.delivery, camera: camera, detail: "\(who) at the \(camera.lowercased())") }
             if tier >= .people && event.kind != .ding { a.fire(.person, camera: camera, detail: identity?.who ?? "") }
         }
-        guard notify else { markEventAsSeen(event.id); return }
+        let allowed = await MainActor.run { AlertPolicy.shouldAlert(kinds, camera: event.deviceId) }
+        guard notify, allowed else { markEventAsSeen(event.id); return }
         content.userInfo = ["eventId": event.id, "watchDevice": event.deviceId ?? 0]
         content.categoryIdentifier = Self.watchCategory
         content.threadIdentifier = camera
@@ -99,7 +109,21 @@ public final class NotificationManager: NSObject, UNUserNotificationCenterDelega
             }
         }
 
-        let request = UNNotificationRequest(identifier: event.id, content: content, trigger: nil)
+        // Single event alerts: within 3 minutes on the same camera, update the alert that's
+        // already there instead of adding another.
+        var identifier = event.id
+        if AlertPolicy.singleEventAlerts, let cam = event.deviceId {
+            let key = "lastAlert.\(cam)"
+            let d = UserDefaults.standard
+            if let last = d.object(forKey: key) as? Date, event.createdAt.timeIntervalSince(last) < 180,
+               let previous = d.string(forKey: key + ".id") {
+                identifier = previous
+                content.sound = nil
+            }
+            d.set(event.createdAt, forKey: key)
+            d.set(identifier, forKey: key + ".id")
+        }
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: nil)
         do {
             try await UNUserNotificationCenter.current().add(request)
             NSLog("🔔 \(content.title): \(content.body)")
