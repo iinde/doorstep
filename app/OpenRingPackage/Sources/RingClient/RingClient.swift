@@ -7,7 +7,7 @@ public actor RingClient {
 
     // MARK: - API URLs
 
-    private enum API {
+    enum API {
         static let oauthToken = "https://oauth.ring.com/oauth/token"
         static let clientsAPI = "https://api.ring.com/clients_api/"
         static let devicesAPI = "https://api.ring.com/devices/v1/"
@@ -29,7 +29,7 @@ public actor RingClient {
     private var accessToken: String?
     private var accessTokenExpiry: Date?
     private var pendingPassword: String?  // Store password for 2FA flow
-    private let keychain = KeychainManager.shared
+    let keychain = KeychainManager.shared
     private let session: URLSession
 
     // MARK: - Init
@@ -133,7 +133,7 @@ public actor RingClient {
         accessTokenExpiry = Date().addingTimeInterval(TimeInterval(response.expiresIn))
     }
 
-    private func getValidAccessToken() async throws -> String {
+    func getValidAccessToken() async throws -> String {
         // Check if we have a valid cached token
         if let token = accessToken,
            let expiry = accessTokenExpiry,
@@ -304,6 +304,22 @@ public actor RingClient {
         default:
             throw RingAPIError.serverError(httpResponse.statusCode)
         }
+    }
+
+    /// Sends a JSON body to `clients_api/<path>` with this session's auth headers and
+    /// returns the HTTP status. Used by RingPush to hand Ring its push token.
+    public func clientsAPIStatus(path: String, method: String, jsonBody: Data) async throws -> Int {
+        let token = try await getValidAccessToken()
+        var request = URLRequest(url: URL(string: API.clientsAPI + path)!)
+        request.httpMethod = method
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("android:com.ringapp", forHTTPHeaderField: "User-Agent")
+        request.setValue(try await keychain.getHardwareId(), forHTTPHeaderField: "hardware_id")
+        request.httpBody = jsonBody
+        let (_, response) = try await session.data(for: request)
+        return (response as? HTTPURLResponse)?.statusCode ?? 0
     }
 
     // MARK: - Devices

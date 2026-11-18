@@ -62,6 +62,8 @@ public struct WhoWasItSettings: View {
             Text("Off by default. Name a plate (\"My car\") and Doorstep tells you when it arrives. Plates are kept only on this Mac for 90 days. Other people's plates are their personal data: only use this for your own drive.")
         }
 
+        LocalAISection()
+
         Section {
             Toggle("Ask Claude when this Mac can't tell", isOn: $claudeEnabled)
                 .disabled(!hasKey)

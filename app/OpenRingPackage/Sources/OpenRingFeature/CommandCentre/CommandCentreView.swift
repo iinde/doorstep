@@ -51,7 +51,7 @@ public struct CommandCentreView: View {
         .background(DS.night)
         .preferredColorScheme(.dark)
         .onReceive(clock) { now = $0 }
-        .task { await streams.addViewer(devices: devices) }
+        .task { await streams.addViewer(devices: BatterySaver.streamable(devices, awake: [])) }
         .onDisappear {
             LiveAnalysis.shared.unwatchAll()
             Task { await MultiStreamManager.shared.removeViewer() }
@@ -153,6 +153,9 @@ struct LiveGrid: View {
                 WebRTCVideoView(videoTrack: track, isPortrait: false, captureHandler: nil, fill: true, label: "\(d.name) (centre)")
                     .id(ObjectIdentifier(track))
                     .onAppear { LiveAnalysis.shared.watch(d.id, track: track) }
+            } else if BatterySaver.sleeping(d, track: false) {
+                BatteryStill(device: d, lastEvent: events.filter { $0.deviceId == d.id }.max { $0.createdAt < $1.createdAt })
+                    .onTapGesture { Task { await streams.startAllStreams(for: [d]) } }
             } else {
                 Text(streams.gaveUp.contains(d.id) ? "No picture from \(d.name)" : "Connecting to \(d.name)")
                     .font(DS.body).foregroundStyle(DS.ash)

@@ -10,10 +10,14 @@ There is no Doorstep account and no Doorstep server. The app talks to Ring (it's
 |---|---|---|---|
 | Ring sign-in, live video, your event list and clips | Ring | While Doorstep is running | It's how Doorstep works |
 | Update check (the app's version number) | GitHub | Every 6 hours | Settings › General › Updates |
+| A push registration (no camera data) | Google's push service (Firebase), as Ring's apps use | Once, then kept connected | `instantAlerts` setting |
 | 3 still frames of a visitor | Anthropic (Claude), your key | Only if "Ask Claude" is on | Off by default |
 | Tracking numbers you added | 17TRACK, your key | Every 30 min, only with a key | Remove the key |
 | Delivery emails, read-only | Microsoft (your mailbox) | Every 15 min, only if connected | Disconnect |
 | Your position, rounded to ~1 km | Open-Meteo (weather) | Only when a parcel's left outside | Settings › Parcels |
+| Alert text and picture | Your phone, via ntfy, Pushover or Telegram | Only if you set it up | Settings › Alerts |
+| Events, snapshots, mode | Your own MQTT broker (Home Assistant) | Only if you connect it | Settings › Automations |
+| Up to 3 still frames | Your own Ollama, at home | Only if you switch on Local AI | Settings › Intelligence |
 
 ## What stays on your Mac
 - **Who came, couriers, sounds, number plates, parcels**: worked out on your Mac with Apple's Vision and Sound Analysis, stored in `~/Library/Application Support/Doorstep`.

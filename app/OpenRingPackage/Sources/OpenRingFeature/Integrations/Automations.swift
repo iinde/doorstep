@@ -7,6 +7,7 @@ public enum DoorTrigger: String, Codable, CaseIterable, Identifiable, Sendable {
     case doorbell = "Doorbell rings"
     case person = "A person is seen"
     case approaching = "Someone walks up to the door"
+    case loitering = "Someone hangs around"
     case delivery = "A delivery arrives"
     case parcelLeft = "A parcel is left"
     case parcelTaken = "A parcel is taken"
@@ -57,6 +58,7 @@ public final class Automations: ObservableObject {
             switch trigger {
             case .doorbell: words = "Someone's at the door"
             case .approaching: words = "Someone's coming to the \(camera.lowercased())"
+            case .loitering: words = "Someone's been at the \(camera.lowercased()) for a while"
             case .delivery: words = detail.isEmpty ? "Delivery at the door" : detail
             case .parcelLeft: words = "A parcel was left at the \(camera.lowercased())"
             case .parcelTaken: words = "A parcel was taken from the \(camera.lowercased())"
@@ -67,6 +69,11 @@ public final class Automations: ObservableObject {
                 u.voice = AVSpeechSynthesisVoice(language: "en-GB")
                 speech.speak(u)
             }
+        }
+        if [.doorbell, .approaching, .loitering].contains(trigger),
+           let id = EventDirectory.shared.devices.first(where: { $0.name == camera })?.id {
+            Task { await HomeAssistantBridge.shared.publishEvent(cameraId: id, cameraName: camera, trigger: trigger, who: nil,
+                                                                 description: detail.isEmpty ? nil : detail, snapshotJPEG: nil) }
         }
         let spot = location ?? EventDirectory.shared.home
         let dark = spot.map { !SolarClock.isDaylight(lat: $0.0, lon: $0.1) } ?? SolarClock.isEvening

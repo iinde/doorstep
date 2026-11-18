@@ -18,17 +18,28 @@ public final class LiveIntel: ObservableObject {
         public var lastPersonAt: Date?
         /// Someone is walking towards the camera (their box is growing).
         public var approaching = false
+        /// How long someone has been in view without leaving, in seconds.
+        public var lingering: Double = 0
         public var updated = Date.distantPast
     }
 
     @Published public private(set) var cameras: [Int: CameraNow] = [:]
     /// Called when someone starts approaching a camera.
     public var onApproach: ((Int) -> Void)?
+    /// Called once when someone has hung around longer than the loitering time.
+    public var onLoiter: ((Int, Int) -> Void)?
+
+    public static var loiterSeconds: Double {
+        Double(UserDefaults.standard.object(forKey: "loiterSeconds") as? Int ?? 40)
+    }
 
     func update(_ id: Int, _ now: CameraNow) {
         let was = cameras[id]?.approaching ?? false
+        let wasLingering = cameras[id]?.lingering ?? 0
         cameras[id] = now
         if now.approaching && !was { onApproach?(id) }
+        let limit = Self.loiterSeconds
+        if limit > 0, now.lingering >= limit, wasLingering < limit { onLoiter?(id, Int(now.lingering)) }
     }
 
     func clear(_ id: Int) { cameras[id] = nil }
@@ -42,6 +53,7 @@ final class FrameAnalyzer: @unchecked Sendable {
     private var heights: [(Date, CGFloat)] = []
     private var state = LiveIntel.CameraNow()
     private var lastPlateRead = Date.distantPast
+    private var presentSince: Date?
     let deviceId: Int
     var cameraName: String { EventDirectory.shared.devices.first { $0.id == deviceId }?.name ?? "Camera" }
 
@@ -74,7 +86,9 @@ final class FrameAnalyzer: @unchecked Sendable {
             let req = VNDetectHumanRectanglesRequest()
             req.upperBodyOnly = false
             try? VNImageRequestHandler(cvPixelBuffer: buffer).perform([req])
+            // Only people inside this camera's zone (if it has one) count.
             state.people = (req.results ?? []).filter { $0.confidence > 0.55 }.map(\.boundingBox)
+                .filter { ZoneStore.contains($0, camera: deviceId) }
             if !state.people.isEmpty { state.lastPersonAt = now }
         } else {
             state.people = []
@@ -100,6 +114,13 @@ final class FrameAnalyzer: @unchecked Sendable {
                 Task { await PlateAnnouncer.announce(plate, camera: camera) }
             }
         }
+        // Lingering: someone in view continuously (allowing 3 s gaps for missed detections).
+        if !state.people.isEmpty {
+            if presentSince == nil { presentSince = now }
+        } else if let last = state.lastPersonAt, now.timeIntervalSince(last) > 3 {
+            presentSince = nil
+        }
+        state.lingering = presentSince.map { now.timeIntervalSince($0) } ?? 0
         state.updated = now
         return state
     }

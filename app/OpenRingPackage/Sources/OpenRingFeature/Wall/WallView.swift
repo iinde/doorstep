@@ -355,6 +355,8 @@ struct WallTile: View {
 
             if DemoMode.isOn && clip == nil {
                 DemoLivePicture(deviceId: device.id)
+            } else if clip == nil, BatterySaver.sleeping(device, track: track != nil) {
+                BatteryStill(device: device, lastEvent: lastEvent)
             }
             if !DemoMode.isOn && track != nil && !hasPicture && !gaveUp {
                 noPictureLine
@@ -413,7 +415,7 @@ struct WallTile: View {
                             }
                         }
                     }
-            } else if !DemoMode.isOn && !gaveUp {
+            } else if !DemoMode.isOn && !gaveUp && !BatterySaver.sleeping(device, track: track != nil) {
                 statusLine
             }
 

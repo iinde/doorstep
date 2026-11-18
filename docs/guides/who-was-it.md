@@ -37,6 +37,17 @@ In **History**, type in the search box at the top right. Plain English works:
 - *doorbell tuesday*
 - a number plate, like *AB12 CDE*
 
+## What was said
+Switch on **Settings › Intelligence › Write down what visitors say** and Doorstep turns speech in doorbell and visitor clips into text, using Apple's on-device recognition (macOS asks for permission once). You'll see it in History under **What was said**, it's added to the alert's description, and it's searchable: try *"behind the bin"*.
+
+## Local AI with Ollama
+If you run [Ollama](https://ollama.com) on your Mac (or another computer at home), Doorstep can ask a vision model to describe each visit in a sentence, and to name the courier when it couldn't read one. Nothing leaves your home and it costs nothing.
+
+1. Install Ollama, then in Terminal: `ollama pull gemma3` (or `qwen2.5vl`, `llava`).
+2. **Settings › Intelligence › Local AI**: switch it on and pick the model.
+
+Local AI is used before the optional Claude check.
+
 ## Optional: Ask Claude
 For visits your Mac can't work out, Doorstep can ask Claude, an AI by Anthropic. It sends **three still frames** (never the video or sound) and gets back who it was. It's **off by default**, uses **your own** Anthropic key (billed to you, usually well under a penny per visit), only for doorbell visits with a person in them, and stops at a daily limit you choose. Set it up in **Settings › Intelligence**.
 

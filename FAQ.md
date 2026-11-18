@@ -25,9 +25,12 @@
 - [Does it do everything Ring Protect does?](#does-it-do-everything-ring-protect-does)
 - [How do modes work?](#how-do-modes-work)
 - [How do familiar faces work?](#how-do-familiar-faces-work)
+- [Can I get Doorstep's alerts on my phone?](#can-i-get-doorsteps-alerts-on-my-phone)
+- [Can I stop the pavement setting off alerts?](#can-i-stop-the-pavement-setting-off-alerts)
 - [How does it know it was DPD?](#how-does-it-know-it-was-dpd)
 - [It got it wrong. How do I correct it?](#it-got-it-wrong-how-do-i-correct-it)
 - [How does recording without a subscription work?](#how-does-recording-without-a-subscription-work)
+- [Does it drain my battery cameras?](#does-it-drain-my-battery-cameras)
 - [Will the recorder drain my battery cameras?](#will-the-recorder-drain-my-battery-cameras)
 - [How does parcel tracking work without an account?](#how-does-parcel-tracking-work-without-an-account)
 - [How do I turn my porch light on when someone arrives?](#how-do-i-turn-my-porch-light-on-when-someone-arrives)
@@ -121,6 +124,12 @@ Turn on **Settings › Alerts › Use modes**. There are four: **Home**, **Away*
 ### How do familiar faces work?
 It's off until you switch it on in **Settings › Alerts › Familiar faces**. Open a visit in History, choose **Find faces in this clip**, and type a name under the face (*"Mum"*). From then on Doorstep compares faces in new clips with the ones you've named, on your Mac, and tells you *"Mum is at the front door"*. Only faces you name are kept; nobody else's face is stored. It's a beta: it's cautious, so it may miss someone rather than mistake them.
 
+### Can I get Doorstep's alerts on my phone?
+Yes. **Settings › Alerts › On your phone** sends them, picture included, through ntfy (free, no account), Pushover or Telegram, with your own topic or keys. The Ring app on your phone still sends Ring's own alerts as usual; Doorstep's say *who* it was.
+
+### Can I stop the pavement setting off alerts?
+Yes: draw a **zone**. In **Settings › General › Cameras** click **Zone…**, then click round your path or drive. People outside it won't alert you or start a recording.
+
 ### How does it know it was DPD?
 It reads. When a clip has a person or vehicle in it, Doorstep looks at a few frames and reads any writing (van sides, jackets, bags), then matches it against carrier names like DPD, Royal Mail, Amazon, Evri, DHL, UPS, FedEx, Yodel and the supermarkets. It also knows a few liveries by colour. All on your Mac. At night the cameras see in black and white and writing is harder to read, so it may say "Delivery driver" instead.
 
@@ -129,6 +138,9 @@ Open the visit in History and use the **Who was it?** button. Pick the right com
 
 ### How does recording without a subscription work?
 Switch it on in **Settings › Recording** and choose which cameras. Doorstep keeps those cameras live in the background and watches the picture itself. It's always holding the last few seconds in memory, so when it sees a person (or any movement, if you prefer) it saves the visit *including the moments before*. Clips go into a folder on your Mac (or a network drive), sorted by day, and are tidied away after the number of days you choose. Your Mac must be on: Doorstep stops it sleeping while recording, but closing a laptop lid will pause it.
+
+### Does it drain my battery cameras?
+No. Doorstep only streams while you're looking, like the Ring app's live view, and with **Battery saver** (on by default, Settings › General) battery cameras don't stream at all when you open Doorstep: they show their latest picture with "Click to go live". The rest of the time Doorstep reads Ring's list of events, which doesn't wake the camera. If a live session drops or the picture freezes, Doorstep reconnects by itself; a camera that never sends a picture (a closed privacy cover) shows "Try again" instead of retrying forever.
 
 ### Will the recorder drain my battery cameras?
 Streaming all day would, so Doorstep only records **wired** cameras by default and labels battery ones clearly. For battery cameras, switch on **Time-lapse** instead: a still picture every few minutes, which uses almost no battery, and History can turn a day of them into a video.
@@ -162,7 +174,7 @@ The camera connected but didn't send video. Common causes: an indoor camera's pr
 Live video comes from Ring's servers and usually starts in one or two seconds. Battery cameras can take longer because they need to wake up. Starting all cameras at once can make the first one slow; Doorstep starts them a moment apart to help.
 
 ### The doorbell window came a few seconds late
-Doorstep checks your doorbell every few seconds rather than receiving Ring's instant push messages, so there can be a short delay. Instant alerts are on the roadmap.
+Doorstep receives Ring's push alerts the same way Ring's phone app does, so rings should appear within a second or two. If the push connection drops (no internet, the Mac waking from sleep), Doorstep falls back to checking every few seconds until it reconnects. You can switch instant alerts off with `defaults write com.openring.app instantAlerts -bool NO` if you ever need to.
 
 ### How do I uninstall it?
 Quit Doorstep (click it in the menu bar, then the gear, then Quit, or press ⌘Q while it's open), then drag it from Applications to the Bin. To remove everything it saved too, delete `~/Library/Application Support/Doorstep`, `~/Library/Caches/Doorstep` and, if you used the recorder, your recordings folder (by default `~/Movies/Doorstep Recordings`).

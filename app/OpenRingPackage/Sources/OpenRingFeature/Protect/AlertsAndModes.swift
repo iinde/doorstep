@@ -41,6 +41,8 @@ public enum AlertPolicy {
     static func kinds(for event: RingEvent, identity: Identity?, tags: [String], familiar: String?, unusual: Bool) -> [AlertKind] {
         var out: [AlertKind] = []
         if event.kind == .ding { out.append(.doorbell) }
+        // Everyone stayed outside this camera's zone: only a ring still counts.
+        if identity?.outsideZone == true { return out }
         if familiar != nil { out.append(.familiar) }
         if identity?.parcelLeft == true || identity?.parcelTaken == true { out.append(.parcels) }
         if unusual { out.append(.unusual) }
@@ -48,6 +50,7 @@ public enum AlertPolicy {
         if tags.contains("Vehicle") { out.append(.vehicles) }
         if tags.contains("Animal") || SoundIndex.shared.sounds(event.id)?.contains(.dog) == true { out.append(.animals) }
         if out.isEmpty { out.append(.motion) }
+        if out == [.motion], identity?.outsideZone == true { return [] }
         return out
     }
 
@@ -107,7 +110,9 @@ public final class Modes: ObservableObject {
     }
 
     @Published public var enabled: Bool { didSet { if !DemoMode.isOn { UserDefaults.standard.set(enabled, forKey: "modesEnabled") } } }
-    @Published public var current: Mode { didSet { save(); NSLog("🏠 Mode: \(current.rawValue)") } }
+    @Published public var current: Mode { didSet { save(); NSLog("🏠 Mode: \(current.rawValue)"); if oldValue != current { onChange?(current) } } }
+    /// Called when the mode changes (to mirror it to Ring, MQTT…).
+    public var onChange: ((Mode) -> Void)?
     @Published public var rules: [Mode: Rules] { didSet { save() } }
     /// Switch to Night and back to Home automatically.
     @Published public var nightSchedule: Bool { didSet { if !DemoMode.isOn { UserDefaults.standard.set(nightSchedule, forKey: "modesNightSchedule") } } }

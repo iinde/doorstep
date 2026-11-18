@@ -71,9 +71,10 @@ public struct AutomationsSettings: View {
             } footer: {
                 Text("Runs one of your Shortcuts, so anything Shortcuts can do (Home lights, Music, Messages, scripts) can react to your door. The shortcut receives a line of text saying what happened. \"After dark\" uses sunset at your home.")
             }
+            MQTTSettingsSection()
         }
         .formStyle(.grouped)
-        .frame(height: 560)
+        .frame(height: 640)
         .task { await automations.loadShortcuts() }
     }
 }

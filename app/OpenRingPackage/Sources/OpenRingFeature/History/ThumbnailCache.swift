@@ -117,6 +117,10 @@ public actor ThumbnailCache {
            let local = try? await RingClient.shared.getEventVideoURL(eventId: eventId) {
             let heard = SoundIndex.listen(to: local)
             SoundIndex.shared.set(eventId, heard)
+            if let said = await TranscriptIndex.transcribe(local) {
+                TranscriptIndex.shared.set(eventId, said)
+                NSLog("🗣 transcript: \(said.count) characters")
+            }
             if !heard.isEmpty { NSLog("👂 \(ev?.deviceName ?? "?"): \(heard.map(\.rawValue))") }
         }
 
@@ -134,7 +138,7 @@ public actor ThumbnailCache {
                 }
             }
             let identity = await Self.identify(frames: frames, first: first, last: last,
-                                               camera: event?.deviceName ?? "Camera",
+                                               camera: event?.deviceName ?? "Camera", deviceId: event?.deviceId,
                                                allowCloud: found.contains("Person") && EventDirectory.shared.isDoorbell(event?.deviceId))
             IdentityIndex.shared.set(eventId, identity)
         } else if !IdentityIndex.shared.has(eventId) {
@@ -144,7 +148,8 @@ public actor ThumbnailCache {
     }
 
     /// Text first, then what you've taught it, then livery, then (if you switched it on) Claude.
-    static func identify(frames: [CGImage], first: CGImage?, last: CGImage?, camera: String, allowCloud: Bool) async -> Identity {
+    static func identify(frames: [CGImage], first: CGImage?, last: CGImage?, camera: String, deviceId: Int? = nil,
+                         allowCloud: Bool) async -> Identity {
         let people = IdentityAnalyzer.people(in: frames)
         let (left, taken) = IdentityAnalyzer.doorstepChange(first: first, last: last)
         var id = Identity(carrier: nil, isDelivery: false, confidence: 0, source: .text)
@@ -167,6 +172,21 @@ public actor ThumbnailCache {
         }
         id.parcelLeft = left
         id.parcelTaken = taken
+        // Zones: if everyone stayed outside the area you care about, say so (alerts skip it).
+        if let deviceId, !people.flatMap({ $0 }).isEmpty {
+            let inZone = people.flatMap { $0 }.contains { ZoneStore.contains($0, camera: deviceId) }
+            id.outsideZone = inZone ? nil : true
+        }
+        // Local AI (Ollama on this Mac): a richer sentence, and a carrier if we had none.
+        if !people.flatMap({ $0 }).isEmpty, let local = await LocalAI.describe(frames: frames, camera: camera) {
+            id.note = local.note
+            if id.carrier == nil, local.carrier != nil {
+                id.carrier = local.carrier; id.isDelivery = true; id.confidence = 0.7; id.source = .localAI
+            } else if id.source == .text && id.carrier == nil {
+                id.source = .localAI
+                id.isDelivery = id.isDelivery || local.isDelivery
+            }
+        }
         // Which way were they going? Tallest person in the first and last frames read.
         let heights = people.map { $0.map(\.height).max() ?? 0 }.filter { $0 > 0 }
         if let a = heights.first, let b = heights.last, heights.count >= 2 {

@@ -109,6 +109,9 @@ public struct AlertsSettings: View {
                 Text("\"One alert per visit\" updates the same notification as a visit goes on, instead of sending a new one for every clip. \"Unusual activity\" is someone at an hour that's rare for that camera.")
             }
 
+            LoiteringSection()
+            PhoneAlertsSection()
+
             Section {
                 Toggle("Use modes", isOn: $modes.enabled)
                 if modes.enabled {
@@ -196,5 +199,126 @@ struct ModeMenu: View {
             .fixedSize()
             .help("Mode: \(modes.current.explanation)")
         }
+    }
+}
+
+/// Settings › Alerts › On your phone.
+struct PhoneAlertsSection: View {
+    @AppStorage("phoneService") private var service = PhoneAlerts.Service.off.rawValue
+    @AppStorage("ntfyServer") private var ntfyServer = ""
+    @AppStorage("ntfyTopic") private var ntfyTopic = ""
+    @AppStorage("telegramChat") private var telegramChat = ""
+    @State private var secretA = ""
+    @State private var secretB = ""
+    @State private var status: String?
+
+    var body: some View {
+        Section {
+            Picker("Send alerts to my phone with", selection: $service) {
+                ForEach(PhoneAlerts.Service.allCases) { Text($0.rawValue).tag($0.rawValue) }
+            }
+            switch PhoneAlerts.Service(rawValue: service) ?? .off {
+            case .off:
+                EmptyView()
+            case .ntfy:
+                TextField("Topic", text: $ntfyTopic, prompt: Text("doorstep-something-random"))
+                Button("Make a random topic") { ntfyTopic = "doorstep-" + UUID().uuidString.prefix(12).lowercased() }
+                TextField("Server (optional)", text: $ntfyServer, prompt: Text("https://ntfy.sh"))
+            case .pushover:
+                SecureField("Your user key", text: $secretA)
+                SecureField("Application token", text: $secretB)
+                Button("Save keys") {
+                    Task {
+                        try? await KeychainManager.shared.saveSecret(secretA, for: "pushoverUser")
+                        try? await KeychainManager.shared.saveSecret(secretB, for: "pushoverToken")
+                        secretA = ""; secretB = ""; status = "Saved in Keychain"
+                    }
+                }
+            case .telegram:
+                SecureField("Bot token", text: $secretA)
+                TextField("Chat ID", text: $telegramChat)
+                Button("Save token") {
+                    Task { try? await KeychainManager.shared.saveSecret(secretA, for: "telegramBot"); secretA = ""; status = "Saved in Keychain" }
+                }
+            }
+            if service != PhoneAlerts.Service.off.rawValue {
+                HStack {
+                    Button("Send a test") {
+                        Task { await PhoneAlerts.send(title: "Doorstep test", body: "Alerts will arrive like this.", image: nil); status = "Sent" }
+                    }
+                    if let status { Text(status).font(.caption).foregroundStyle(.secondary) }
+                }
+            }
+        } header: {
+            Text("On your phone")
+        } footer: {
+            Text("Doorstep's alerts, picture included, on your iPhone or Android. ntfy needs no account: install the ntfy app and subscribe to the same topic (anyone who knows the topic can read it, so keep it random). Pushover and Telegram use your own keys. Only alerts you've chosen above are sent.")
+        }
+    }
+}
+
+/// Settings › Alerts › Loitering.
+struct LoiteringSection: View {
+    @AppStorage("loiterSeconds") private var seconds = 40
+    var body: some View {
+        Section {
+            Picker("Tell me when someone hangs around for", selection: $seconds) {
+                Text("Never").tag(0)
+                ForEach([20, 40, 60, 120, 300], id: \.self) { Text($0 < 60 ? "\($0) seconds" : "\($0 / 60) minute\($0 >= 120 ? "s" : "")").tag($0) }
+            }
+        } header: {
+            Text("Loitering")
+        } footer: {
+            Text("Works on cameras Doorstep is recording or showing in the command centre, and only inside a camera's zone if it has one.")
+        }
+    }
+}
+
+/// Settings › Intelligence › Local AI and transcripts.
+struct LocalAISection: View {
+    @AppStorage("ollamaEnabled") private var enabled = false
+    @AppStorage("ollamaServer") private var server = ""
+    @AppStorage("ollamaModel") private var model = ""
+    @AppStorage("transcribeClips") private var transcribe = false
+    @State private var models: [String] = []
+    @State private var status: String?
+
+    var body: some View {
+        Section {
+            Toggle("Write down what visitors say", isOn: $transcribe)
+                .onChange(of: transcribe) { _, on in
+                    if on { Task { if !(await TranscriptIndex.requestPermission()) { transcribe = false } } }
+                }
+        } header: {
+            Text("What was said")
+        } footer: {
+            Text("Turns speech in doorbell and visitor clips into text with Apple's on-device recognition, so you can read it and search it (\"behind the bin\"). Nothing is sent anywhere.")
+        }
+
+        Section {
+            Toggle("Describe visits with Ollama on this Mac", isOn: $enabled)
+            if enabled {
+                TextField("Server", text: $server, prompt: Text("http://127.0.0.1:11434"))
+                HStack {
+                    Picker("Model", selection: $model) {
+                        Text("Choose a vision model").tag("")
+                        ForEach(models, id: \.self) { Text($0).tag($0) }
+                    }
+                    Button("Refresh") { Task { await load() } }
+                }
+                if let status { Text(status).font(.caption).foregroundStyle(.secondary) }
+            }
+        } header: {
+            Text("Local AI")
+        } footer: {
+            Text("If you run Ollama (ollama.com), Doorstep can ask a vision model like qwen2.5vl, gemma3 or llava to describe each visit. It runs on your own computer, so nothing leaves your home, and it costs nothing. Install a model with \"ollama pull gemma3\".")
+        }
+        .task { if enabled { await load() } }
+        .onChange(of: enabled) { _, on in if on { Task { await load() } } }
+    }
+
+    private func load() async {
+        models = await LocalAI.models()
+        status = models.isEmpty ? "Couldn't reach Ollama at \(LocalAI.server). Is it running?" : "\(models.count) models found"
     }
 }

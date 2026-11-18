@@ -14,6 +14,20 @@
 | Familiar faces | ✅ | Someone you've named (needs Familiar faces on) |
 | Unusual activity | ✅ | A person at an hour that's rare for that camera |
 
+## Zones
+In **Settings › General › Cameras**, click **Zone…** next to a camera. You'll see a fresh picture from it. Click round the area that matters, like your path, drive or garden, then **Save**. People and movement outside the zone won't alert you or start a recording (a doorbell press still does). Leave it empty to watch the whole picture.
+
+## Loitering
+**Settings › Alerts › Loitering** tells you when someone stays in view for a while (20 seconds to 5 minutes): *"Someone's been hanging around Side Gate for 40 seconds."* It works on cameras Doorstep is recording or showing in the command centre, and respects zones. It's also an automation trigger, so you could turn the lights on.
+
+## On your phone
+**Settings › Alerts › On your phone** sends the same alerts, with the picture, to your phone:
+- **ntfy** (no account): install the free ntfy app, click **Make a random topic** in Doorstep, and subscribe to that topic in the app. Anyone who knows the topic can read it, so keep it random.
+- **Pushover**: paste your user key and an application token from pushover.net.
+- **Telegram**: create a bot with @BotFather, paste its token and your chat ID.
+
+Click **Send a test** to check. Only alert kinds you've switched on are sent, and modes apply.
+
 ## One alert per visit
 A visit often makes several clips: walking up, ringing, waiting, leaving. With **One alert per visit** on, the first clip sends an alert and the rest quietly update it, so you get one notification that ends up describing the whole visit.
 

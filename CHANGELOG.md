@@ -2,6 +2,12 @@
 
 Full notes for each version are on the [releases page](https://github.com/iinde/doorstep-releases/releases).
 
+## 0.5.0
+- Instant alerts: Doorstep receives Ring's push alerts like Ring's own app, so rings pop up straight away.
+- Battery saver: battery cameras show their latest picture until you click them (on by default).
+- Home Assistant and Homebridge over MQTT (auto-discovered entities, two-way mode).
+- Zones, loitering alerts, alerts on your phone (ntfy, Pushover, Telegram), transcripts of what visitors say, local AI descriptions with Ollama, camera health (Wi-Fi, battery, offline), chime snooze and test, and mirroring Doorstep's mode to Ring's.
+
 ## 0.4.0
 - Everything Ring Protect does, on your Mac: choose what alerts you, one alert per visit, video descriptions in every alert, Home/Away/Night/Quiet modes, familiar faces (beta, opt in), unusual activity alerts, 24/7 recording, longer retention, and Share.
 

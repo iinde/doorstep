@@ -54,7 +54,7 @@ let package = Package(
 
         .testTarget(
             name: "OpenRingFeatureTests",
-            dependencies: ["OpenRingFeature"]
+            dependencies: ["OpenRingFeature", "RingClient"]
         ),
     ]
 )

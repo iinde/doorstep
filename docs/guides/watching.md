@@ -9,6 +9,9 @@ Click the doorway icon in your menu bar. You'll see:
 
 Along the top: the time, a one-line summary of today, and buttons for the command centre (⌘K), parcels, **History** (⌘Y) and the **gear menu** (Settings, Check for Updates, Quit).
 
+## Battery cameras
+With **Battery saver** on (the default, Settings › General), battery cameras show their latest picture on the Wall instead of streaming, with **Click to go live**. Click to watch; it stops again when you close Doorstep. Wired cameras stream as normal.
+
 ## One camera, big
 Click a camera (or press **⌘1** to **⌘4**). You'll get:
 - **Hold to talk**: press and hold to speak through the camera. The first time you talk on a camera it takes a couple of seconds to connect the microphone. Let go to stop.
@@ -20,12 +23,19 @@ Click a camera (or press **⌘1** to **⌘4**). You'll get:
 Press **Esc** or click **All cameras** to go back. Use the arrow keys to move between cameras.
 
 ## When someone rings
-A panel slides in at the top right of your screen with the doorbell live and **Hold to talk**, even if you're working in another app. It closes by itself after two minutes, or click **×**. You can turn this off in **Settings › General**.
+Doorstep listens for Ring's push alerts, the same way Ring's phone app does, so a ring shows up within a second or two. A panel slides in at the top right of your screen with the doorbell live and **Hold to talk**, even if you're working in another app. It closes by itself after two minutes, or click **×**. You can turn this off in **Settings › General**.
 
 With the recorder on (see [Recording](recording.md)), Doorstep can also show you the door when someone **walks up**, before they ring.
 
 ## Only the cameras you want
 Got cameras you don't need to see all the time, like a shared location at a family member's house? **Settings › General › Cameras** has a switch for each camera, grouped by location, with **Hide all** for a whole location. Hidden cameras disappear from everywhere in Doorstep and stop streaming and alerting until you switch them back on.
+
+## Camera health and chimes
+**Settings › General › Cameras** shows each camera's Wi-Fi signal and battery. Doorstep nudges you (once a day) when a battery drops to 20% or a camera goes offline.
+
+If you have a Ring Chime, the **Chimes** section lets you **Snooze** it (1 hour, 3 hours, until tomorrow) or **Test** it.
+
+**When Doorstep's mode changes, change Ring's too** copies Home, Away and Quiet (as Disarmed) to Ring's own location mode, so Ring Alarm and the Ring app follow along.
 
 ## Keyboard shortcuts
 | Keys | Does |

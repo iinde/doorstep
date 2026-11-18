@@ -1,4 +1,5 @@
 import SwiftUI
+import UserNotifications
 import OpenRingFeature
 import DesignSystem
 import RingClient
@@ -34,6 +35,12 @@ struct OpenRingApp: App {
             CommandCentreView(devices: appState.devices, events: appState.events)
         }
         .defaultSize(width: 1440, height: 900)
+
+        // Draw a camera's zone
+        WindowGroup("Zone", id: "zone", for: Int.self) { $id in
+            ZoneWindow(deviceId: id ?? 0).environmentObject(appState)
+        }
+        .windowResizability(.contentSize)
 
         // "I'm expecting a parcel"
         Window("Expecting a parcel", id: "expect") {
@@ -190,6 +197,37 @@ final class AppState: ObservableObject {
             Automations.shared.fire(.approaching, camera: device.name, detail: "")
             DoorbellCallController.shared.show(device: device, event: nil, title: "Someone's coming to \(device.name)")
         }
+        // Someone hanging around: alert (and to the phone), run automations.
+        LiveIntel.shared.onLoiter = { [weak self] id, seconds in
+            guard let self, AlertKind.people.isOn, Modes.shared.allowsAlerts(camera: id),
+                  let device = self.devices.first(where: { $0.id == id }) else { return }
+            Automations.shared.fire(.loitering, camera: device.name, detail: "\(seconds) seconds")
+            let c = UNMutableNotificationContent()
+            c.title = "Someone's hanging around \(device.name)"
+            c.body = "They've been there for \(seconds) seconds."
+            c.userInfo = ["watchDevice": id]
+            c.categoryIdentifier = NotificationManager.watchCategory
+            if UserDefaults.standard.object(forKey: "notificationSound") as? Bool ?? true { c.sound = .default }
+            Task {
+                try? await UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "loiter-\(id)-\(Date().timeIntervalSince1970)", content: c, trigger: nil))
+                await PhoneAlerts.send(title: c.title, body: c.body, image: nil)
+            }
+        }
+        // Mirror Doorstep's mode to Ring's own location mode, if asked.
+        // Home Assistant can switch Doorstep's mode.
+        HomeAssistantBridge.shared.onModeCommand = { name in
+            if let m = Modes.Mode.allCases.first(where: { $0.rawValue.caseInsensitiveCompare(name) == .orderedSame }) {
+                Modes.shared.enabled = true
+                Modes.shared.current = m
+            }
+        }
+        Modes.shared.onChange = { [weak self] mode in
+            Task { await HomeAssistantBridge.shared.publishMode(mode) }
+            guard let self, UserDefaults.standard.bool(forKey: "syncRingMode"), !DemoMode.isOn else { return }
+            let ring: RingLocationMode = [.home: .home, .away: .away, .night: .home, .off: .disarmed][mode] ?? .home
+            let locations = Set(self.devices.map(\.locationId))
+            Task { for l in locations { try? await RingClient.shared.setLocationMode(l, ring) } }
+        }
         // "Watch door" from a notification: show that camera live in the call panel.
         NotificationManager.shared.onWatchDevice = { [weak self] id in
             guard let self, let device = self.devices.first(where: { $0.id == id }) else { return }
@@ -314,6 +352,7 @@ final class AppState: ObservableObject {
                 // Request notification permission and start polling
                 _ = await NotificationManager.shared.requestPermission()
                 startPolling()
+                startPush()
             } else {
                 authState = .unauthenticated
             }
@@ -330,6 +369,7 @@ final class AppState: ObservableObject {
         // Request notification permission and start polling
         _ = await NotificationManager.shared.requestPermission()
         startPolling()
+        startPush()
     }
 
     func loadData() async {
@@ -396,6 +436,7 @@ final class AppState: ObservableObject {
     // MARK: Intelligence housekeeping after each refresh
 
     private var lastMailCheck = Date.distantPast
+    private var lastBridgeCameras: [Int] = []
 
     private func afterRefresh() {
         let devices = self.devices, events = self.events
@@ -404,6 +445,19 @@ final class AppState: ObservableObject {
         Task { await DailyBrief.sendIfDue(events: events) }
         Modes.shared.ensureDefaults(for: devices)
         Modes.shared.tick()
+        Task { await HealthMonitor.shared.check(self.allDevices) }
+        // Home Assistant: cameras (when the list changes), parcels due, current mode.
+        let ids = devices.map(\.id)
+        if ids != lastBridgeCameras {
+            lastBridgeCameras = ids
+            Task {
+                await HomeAssistantBridge.shared.startIfEnabled()
+                await HomeAssistantBridge.shared.setCameras(devices)
+                if Modes.shared.enabled { await HomeAssistantBridge.shared.publishMode(Modes.shared.current) }
+            }
+        }
+        let due = ParcelStore.shared.parcels.filter(\.isExpectedToday).count
+        Task { await HomeAssistantBridge.shared.publishParcelsDue(due) }
         let moments = MomentBuilder.build(from: events)
         Task { await RainWatch.shared.check(moments: moments) }
         // Recording on this Mac (no Ring subscription needed) and battery-camera stills.
@@ -448,6 +502,8 @@ final class AppState: ObservableObject {
 
     func logout() async {
         stopPolling()
+        await RingPush.shared.stop()
+        await RingPush.shared.resetRegistration()
         do {
             try await RingClient.shared.logout()
         } catch {
@@ -514,6 +570,53 @@ final class AppState: ObservableObject {
         guard let bell = devices.first(where: { $0.deviceType == .doorbell }),
               let event = events.first(where: { $0.deviceId == bell.id }) else { return }
         DoorbellCallController.shared.show(device: bell, event: event)
+    }
+
+    // MARK: Instant alerts (Ring push, as Ring's own app receives them)
+
+    private var lastPushRefresh = Date.distantPast
+    private var pushedDings: Set<String> = []
+
+    /// Listen for Ring's push notifications. Polling carries on as the fallback.
+    func startPush() {
+        guard !DemoMode.isOn, UserDefaults.standard.object(forKey: "instantAlerts") as? Bool ?? true else { return }
+        Task {
+            NSLog("⚡️ Instant alerts: starting")
+            await RingPush.shared.start { event in
+                Task { @MainActor [weak self] in self?.handlePush(event) }
+            }
+            // Report once it has had a chance to register and connect.
+            for wait in [15, 45, 120] {
+                try? await Task.sleep(for: .seconds(wait))
+                let ok = await RingPush.shared.isConnected
+                NSLog("⚡️ Instant alerts: \(ok ? "connected" : "not connected yet (polling continues)")")
+                if ok { break }
+            }
+        }
+    }
+
+    private func handlePush(_ event: RingPushEvent) {
+        NSLog("⚡️ Push: \(event.kind) at device \(event.deviceId)")
+        guard let device = devices.first(where: { $0.id == event.deviceId }) else { return }
+        if event.kind == .ding {
+            let key = event.eventId ?? "\(event.deviceId)-\(Int(event.createdAt.timeIntervalSince1970 / 30))"
+            if !pushedDings.contains(key) {
+                pushedDings.insert(key)
+                announcedDings.insert(event.eventId ?? key)
+                Automations.shared.fire(.doorbell, camera: device.name, detail: "")
+                if UserDefaults.standard.object(forKey: "callPanelEnabled") as? Bool ?? true {
+                    DoorbellCallController.shared.show(device: device, event: nil, title: "Someone's at \(device.name)")
+                }
+            }
+        }
+        // Fetch the event now (and again shortly, when Ring has the clip) so the alert follows.
+        guard Date().timeIntervalSince(lastPushRefresh) > 3 else { return }
+        lastPushRefresh = Date()
+        Task {
+            await loadData()
+            try? await Task.sleep(for: .seconds(20))
+            await loadData()
+        }
     }
 
     func startPolling() {
@@ -628,6 +731,12 @@ struct SettingsView: View {
 /// Which cameras Doorstep shows, grouped by Ring location (e.g. your home and a shared one).
 private struct CamerasSection: View {
     @EnvironmentObject var appState: AppState
+    @ObservedObject private var health = HealthMonitor.shared
+    @ObservedObject private var zones = ZoneStore.shared
+    @Environment(\.openWindow) private var openWindow
+    @AppStorage("syncRingMode") private var syncRingMode = false
+    @AppStorage("batterySaver") private var batterySaver = true
+    private var chimes: [RingDevice] { appState.allDevices.filter { $0.deviceType == .chime } }
 
     private var cameras: [RingDevice] { appState.allDevices.filter { $0.deviceType != .chime } }
     private var locations: [[RingDevice]] {
@@ -649,15 +758,78 @@ private struct CamerasSection: View {
                     }
                 }
                 ForEach(group, id: \.id) { d in
-                    Toggle(d.name, isOn: Binding(
-                        get: { !CameraVisibility.isHidden(d.id) },
-                        set: { appState.setHidden(d.id, !$0) }))
+                    HStack(spacing: 10) {
+                        Text(d.name)
+                        Spacer()
+                        if let h = health.health[d.id] {
+                            if let bars = h.signalBars {
+                                Image(systemName: "wifi", variableValue: Double(bars) / 4)
+                                    .help("Wi-Fi \(h.rssi.map { "\($0) dBm" } ?? "") \(h.rssiCategory ?? "")")
+                            }
+                            if let b = h.batteryPercent ?? d.batteryLevel, d.isBatteryPowered {
+                                Text("\(b)%").font(.caption).foregroundStyle(b <= 20 ? .red : .secondary)
+                            }
+                        } else if let b = d.batteryLevel, d.isBatteryPowered {
+                            Text("\(b)%").font(.caption).foregroundStyle(b <= 20 ? .red : .secondary)
+                        }
+                        if !d.isOnline { Text("Offline").font(.caption).foregroundStyle(.red) }
+                        if d.deviceType != .chime {
+                            Button(ZoneStore.shared.zones[d.id] == nil ? "Zone…" : "Edit zone…") {
+                                openWindow(id: "zone", value: d.id)
+                                NSApp.activate(ignoringOtherApps: true)
+                            }
+                            .controlSize(.small)
+                        }
+                        Toggle(d.name, isOn: Binding(
+                            get: { !CameraVisibility.isHidden(d.id) },
+                            set: { appState.setHidden(d.id, !$0) }))
+                            .labelsHidden()
+                            .toggleStyle(.switch)
+                            .help("Show \(d.name) in Doorstep")
+                    }
                 }
             }
         } header: {
             Text("Cameras")
         } footer: {
-            Text("Hidden cameras don't appear anywhere in Doorstep, don't stream and don't send alerts. Handy for a shared location, like a family member's house. They stay in your Ring account.")
+            Text("Hidden cameras don't appear anywhere in Doorstep, don't stream and don't send alerts. Handy for a shared location, like a family member's house. They stay in your Ring account. A zone is the part of the picture that matters (your path, your drive): people outside it won't alert you.")
+        }
+        .task { await health.check(appState.allDevices, force: true) }
+
+        if !chimes.isEmpty {
+            Section {
+                ForEach(chimes, id: \.id) { c in
+                    HStack {
+                        Text(c.name)
+                        Spacer()
+                        Menu("Snooze") {
+                            Button("1 hour") { Task { try? await RingClient.shared.snoozeChime(c.id, minutes: 60) } }
+                            Button("3 hours") { Task { try? await RingClient.shared.snoozeChime(c.id, minutes: 180) } }
+                            Button("Until tomorrow") { Task { try? await RingClient.shared.snoozeChime(c.id, minutes: 1440) } }
+                            Divider()
+                            Button("Stop snoozing") { Task { try? await RingClient.shared.snoozeChime(c.id, minutes: 0) } }
+                        }
+                        .fixedSize()
+                        Button("Test") { Task { try? await RingClient.shared.playChime(c.id) } }
+                    }
+                }
+            } header: {
+                Text("Chimes")
+            } footer: {
+                Text("Snooze stops a chime ringing for a while (baby asleep, on a call). Test plays the doorbell sound.")
+            }
+        }
+
+        Section {
+            Toggle("Battery saver", isOn: $batterySaver)
+        } footer: {
+            Text("Battery cameras show their latest picture instead of streaming whenever Doorstep is open, and only go live when you click them. Streaming is what drains a Ring battery.")
+        }
+
+        Section {
+            Toggle("When Doorstep's mode changes, change Ring's too", isOn: $syncRingMode)
+        } footer: {
+            Text("Home, Away and Quiet (Disarmed) are copied to Ring's own modes, so Ring Alarm and your Ring app follow along. Night counts as Home. Only works if you use modes in the Ring app.")
         }
     }
 }
@@ -783,5 +955,20 @@ struct ExpectWindow: View {
     var body: some View {
         ExpectParcelView(onDone: { dismissWindow(id: "expect") })
             .preferredColorScheme(.dark)
+    }
+}
+
+
+/// Hosts the zone editor in its own window.
+struct ZoneWindow: View {
+    let deviceId: Int
+    @EnvironmentObject var appState: AppState
+    @Environment(\.dismissWindow) private var dismissWindow
+    var body: some View {
+        if let d = appState.allDevices.first(where: { $0.id == deviceId }) {
+            ZoneEditor(device: d, onDone: { dismissWindow(id: "zone") })
+        } else {
+            Text("Camera not found").padding(40)
+        }
     }
 }

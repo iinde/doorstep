@@ -94,6 +94,22 @@ public final class NotificationManager: NSObject, UNUserNotificationCenterDelega
             if let who = identity?.who, identity?.isDelivery == true { a.fire(.delivery, camera: camera, detail: "\(who) at the \(camera.lowercased())") }
             if tier >= .people && event.kind != .ding { a.fire(.person, camera: camera, detail: identity?.who ?? "") }
         }
+        // Home Assistant (if connected): every event, with who, the description and the picture.
+        if let cam = event.deviceId {
+            let haKind: DoorstepEventKind = identity?.parcelTaken == true ? .parcelTaken
+                : identity?.parcelLeft == true ? .parcelLeft
+                : familiar != nil ? .familiarFace
+                : event.kind == .ding ? .doorbell
+                : identity?.isDelivery == true ? .delivery
+                : unusual ? .unusual
+                : tier >= .people ? .person : .motion
+            let jpeg = snapshot.flatMap { $0.tiffRepresentation }.flatMap { NSBitmapImageRep(data: $0) }?
+                .representation(using: .jpeg, properties: [.compressionFactor: 0.7])
+            let who = familiar ?? identity?.who ?? (tier >= .people ? "Person" : nil)
+            let body = content.body
+            await HomeAssistantBridge.shared.publishEvent(cameraId: String(cam), cameraName: camera, kind: haKind,
+                                                          who: who, description: body, snapshotJPEG: jpeg, at: event.createdAt)
+        }
         let allowed = await MainActor.run { AlertPolicy.shouldAlert(kinds, camera: event.deviceId) }
         guard notify, allowed else { markEventAsSeen(event.id); return }
         content.userInfo = ["eventId": event.id, "watchDevice": event.deviceId ?? 0]
@@ -123,6 +139,10 @@ public final class NotificationManager: NSObject, UNUserNotificationCenterDelega
             d.set(event.createdAt, forKey: key)
             d.set(identifier, forKey: key + ".id")
         }
+        let jpegForPhone: Data? = snapshot.flatMap { $0.tiffRepresentation }.flatMap { NSBitmapImageRep(data: $0) }?
+            .representation(using: .jpeg, properties: [.compressionFactor: 0.75])
+        let phoneTitle = content.title, phoneBody = content.body
+        Task.detached { await PhoneAlerts.send(title: phoneTitle, body: phoneBody, image: jpegForPhone) }
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: nil)
         do {
             try await UNUserNotificationCenter.current().add(request)

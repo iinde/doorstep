@@ -67,6 +67,7 @@ public struct MomentSearch {
         case .activity: haystack += ["motion", "movement", "activity"]
         }
         for s in m.sounds { haystack.append(s.rawValue.lowercased()) }
+        for e in m.events { if let t = TranscriptIndex.shared.text(e.id) { haystack.append(t.lowercased()) } }
         if m.sounds.contains(.knock) { haystack += ["knock", "knocked"] }
         if m.sounds.contains(.dog) { haystack += ["dog", "bark"] }
         for e in m.events {

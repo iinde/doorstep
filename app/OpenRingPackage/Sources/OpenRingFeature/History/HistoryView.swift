@@ -584,6 +584,12 @@ private struct MomentDetail: View {
                 if let line = identityLine {
                     Text(line).font(DS.meta).foregroundStyle(DS.ash)
                 }
+                if let said = TranscriptIndex.shared.text((current ?? moment.headline).id) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("What was said").font(DS.meta).foregroundStyle(DS.ash)
+                        Text("\u{201C}\(said)\u{201D}").font(DS.body).foregroundStyle(DS.paper).textSelection(.enabled)
+                    }
+                }
                 if FaceIndex.isEnabled, !DemoMode.isOn {
                     FacesInClip(eventId: (current ?? moment.headline).id)
                 }
@@ -657,6 +663,7 @@ private struct MomentDetail: View {
             case .livery: parts.append("\(who) going by the colours (a guess)")
             case .you: parts.append("You said \(who)")
             case .claude: parts.append("Claude: \(id.note ?? who)")
+            case .localAI: parts.append("Local AI: \(id.note ?? who)")
             }
         } else if id.source == .you {
             parts.append("You said not a delivery")

@@ -43,7 +43,8 @@ public enum VideoDescription {
         // What else was heard.
         let heard = sounds.filter { $0 != .knock && $0 != .vehicle }.map { $0.rawValue.lowercased() }
         if !heard.isEmpty { sentence += " " + join(heard).prefix(1).uppercased() + join(heard).dropFirst() + " could be heard." }
-        if let note = id?.note, id?.source == .claude { sentence += " " + note.trimmingCharacters(in: .whitespaces) + (note.hasSuffix(".") ? "" : ".") }
+        if let said = TranscriptIndex.shared.text(event.id), said.count < 140 { sentence += " They said: \u{201C}\(said)\u{201D}" }
+        if let note = id?.note, id?.source == .claude || id?.source == .localAI { sentence += " " + note.trimmingCharacters(in: .whitespaces) + (note.hasSuffix(".") ? "" : ".") }
         return sentence
     }
 

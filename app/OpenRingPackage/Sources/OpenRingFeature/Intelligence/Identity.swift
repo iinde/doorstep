@@ -10,6 +10,7 @@ public struct Identity: Codable, Sendable, Equatable {
         case taught    // matched against clips you labelled
         case you       // you said so
         case claude    // the optional cloud check
+        case localAI   // Ollama on this Mac
     }
 
     public var carrier: Carrier?
@@ -24,6 +25,8 @@ public struct Identity: Codable, Sendable, Equatable {
     public var note: String?
     /// "approaching" or "leaving", from whether the person grew or shrank through the clip.
     public var movement: String?
+    /// Everyone in the clip was outside the camera's zone (pavement, road).
+    public var outsideZone: Bool?
 
     /// What to call whoever it was, or nil when it's just "a person".
     public var who: String? {

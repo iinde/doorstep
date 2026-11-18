@@ -47,6 +47,9 @@ public struct PopoverView: View {
     private var videoDevices: [RingDevice] {
         devices.filter { $0.deviceType != .chime }
     }
+    /// Battery cameras you've clicked on this time (battery saver lets them stream).
+    @State private var awake: Set<Int> = []
+    private var streamable: [RingDevice] { BatterySaver.streamable(videoDevices, awake: awake) }
 
     public init(
         devices: [RingDevice],
@@ -141,6 +144,11 @@ public struct PopoverView: View {
                         events: events,
                         streamManager: streamManager,
                         onFocus: { device in
+                            if device.isBatteryPowered, !awake.contains(device.id) {
+                                awake.insert(device.id)
+                                let list = streamable
+                                Task { await streamManager.refresh(devices: list) }
+                            }
                             selectedDevice = device
                             streamManager.setActiveDevice(device.id)
                             withAnimation(DS.settle) { isFocused = true }
@@ -195,11 +203,11 @@ public struct PopoverView: View {
         }
         .onChange(of: videoDevices.map(\.id)) { _, _ in
             // Cameras arrived (or changed) after the view appeared: start them.
-            let list = videoDevices
+            let list = streamable
             Task { await streamManager.refresh(devices: list) }
         }
         .onAppear {
-            let list = videoDevices
+            let list = streamable
             NSLog("🚀 Viewer opened (\(list.count) cameras)")
             Task { await streamManager.addViewer(devices: list) }
             showLiveView = true

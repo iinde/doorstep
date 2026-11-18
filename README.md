@@ -53,7 +53,7 @@ More help: [Getting started](docs/guides/getting-started.md) · [Why the "Open A
 ### See everything, instantly
 - **Every camera live, side by side**, right from the menu bar. Click one to make it big.
 - **A timeline of your day** under the cameras. Every mark is something that happened; amber means someone rang.
-- **The doorbell pops up when someone rings**, like a FaceTime call, with **Hold to talk**.
+- **The doorbell pops up the moment someone rings**, like a FaceTime call, with **Hold to talk**. Doorstep receives Ring's push alerts the same way Ring's phone app does, so there's no waiting.
 - **It sees people walking up**, and shows you the door before they've even rung.
 - **Float any camera** in a little window that stays on top while you work.
 - **Only the cameras you want.** Hide any camera, or a whole shared location, in Settings.
@@ -64,6 +64,8 @@ More help: [Getting started](docs/guides/getting-started.md) · [Why the "Open A
 - **It listens, too.** Knocking, dogs barking, breaking glass, alarms. *"Someone knocked at Front Door"* shows up even when nobody pressed the bell.
 - **Parcel left. Parcel taken.** The doorbell notices a parcel arriving on your step, and warns you if one disappears.
 - **Number plates** (off unless you switch it on): name your car and Doorstep tells you when it's home.
+- **What visitors said**, written down on your Mac (optional): *"I'll leave it behind the bin."* Searchable.
+- **Local AI** (optional): if you run [Ollama](https://ollama.com), a vision model on your own computer describes every visit. Nothing leaves your home.
 - **Search your history in plain English**: *"DPD last week"*, *"person at the garden yesterday evening"*, *"knock"*.
 
 ### Parcels, sorted
@@ -79,6 +81,9 @@ More help: [Getting started](docs/guides/getting-started.md) · [Why the "Open A
 - **Home, Away, Night and Quiet modes**, like an alarm panel: each decides which cameras alert you and which record. Switch from the Wall, on a schedule, or with *"Set Doorstep to Away"*.
 - **Familiar faces** (off unless you switch it on): name the people you know and get *"Mum is at the front door"*.
 - **Unusual activity**: someone in the garden at 3am, when that never happens, gets flagged.
+- **Zones**: draw the part of each camera that matters (your path, your drive). People on the pavement and passing cars stop setting things off.
+- **Loitering**: *"Someone's been hanging around the side gate for 40 seconds."*
+- **On your phone**: Doorstep's alerts, with the picture, on your iPhone or Android via ntfy, Pushover or Telegram.
 
 ### Record without a Ring subscription
 - **Your Mac becomes the recorder.** Without Ring's subscription, Ring keeps no video at all. Doorstep can keep chosen cameras live, spot people itself, and save each visit with the few seconds *before* it, to a folder you choose (a network drive works).
@@ -94,9 +99,13 @@ More help: [Getting started](docs/guides/getting-started.md) · [Why the "Open A
 
 ### Works with the rest of your Mac
 - **Automations**: when the doorbell rings or someone walks up after dark, run any Shortcut. Turn the porch light on, pause the music, message yourself a photo.
+- **Home Assistant and Homebridge**: who came, parcels, modes, battery and snapshots appear in Home Assistant by themselves (MQTT, your own broker). Home Assistant can switch Doorstep's mode too.
 - **Siri and Shortcuts**: *"Show my door in Doorstep"*, *"What happened at home in Doorstep"*.
 - **Spoken announcements** in a British voice, if you want them.
 - **Add to Calendar** for the day a parcel's due.
+- **Chimes**: snooze your Ring Chime for an hour (baby asleep) or test it.
+- **Ring's own modes**: when Doorstep switches to Away, Ring (and Ring Alarm) can follow.
+- **Camera health**: Wi-Fi signal and battery for every camera, and a nudge when a battery's low or a camera goes offline.
 
 ### Private by design
 - **No account, no server, no tracking.** Everything Doorstep works out (who came, what was heard, which plates) is worked out on your Mac.

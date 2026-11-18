@@ -13,6 +13,7 @@ Then, whatever you're interested in:
 - **[Recording without a subscription](recording.md)**: your Mac as the recorder, time-lapse, "Your day in 60 seconds".
 - **[The command centre](command-centre.md)**: full screen, map, radar, insights.
 - **[Automations and Siri](automations.md)**: porch lights, pausing music, Shortcuts recipes.
+- **[Home Assistant and Homebridge](home-assistant.md)**: Doorstep's smarts in your smart home.
 - **[Privacy](privacy.md)**: exactly what leaves your Mac, and when.
 - **[Troubleshooting](troubleshooting.md)**: when something isn't right.
 
