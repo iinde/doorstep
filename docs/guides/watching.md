@@ -24,6 +24,9 @@ A panel slides in at the top right of your screen with the doorbell live and **H
 
 With the recorder on (see [Recording](recording.md)), Doorstep can also show you the door when someone **walks up**, before they ring.
 
+## Only the cameras you want
+Got cameras you don't need to see all the time, like a shared location at a family member's house? **Settings › General › Cameras** has a switch for each camera, grouped by location, with **Hide all** for a whole location. Hidden cameras disappear from everywhere in Doorstep and stop streaming and alerting until you switch them back on.
+
 ## Keyboard shortcuts
 | Keys | Does |
 |---|---|

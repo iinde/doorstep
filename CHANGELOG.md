@@ -2,6 +2,9 @@
 
 Full notes for each version are on the [releases page](https://github.com/iinde/doorstep-releases/releases).
 
+## 0.3.2
+- **Choose which cameras to show.** Settings › General › Cameras, grouped by location, with Hide all for a shared location. Hidden cameras don't stream or alert. (Thanks to a Reddit user for asking.)
+
 ## 0.3.1
 - **Try it without a Ring account**: demo mode with drawn cameras, visits and parcels.
 - **Quit, Settings and Check for Updates** now live in the gear menu on the Wall.

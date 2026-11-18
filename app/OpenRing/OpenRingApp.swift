@@ -159,6 +159,10 @@ final class AppState: ObservableObject {
     @Published var motionAlertsEnabled = true
 
     @Published var selectedDevice: RingDevice?
+    /// Every camera on the Ring account, including ones you've hidden.
+    @Published var allDevices: [RingDevice] = []
+    private var demoEvents: [RingEvent] = []
+    /// The cameras you've chosen to see. Everything in the app works from this list.
     @Published var devices: [RingDevice] = []
     @Published var events: [RingEvent] = []
 
@@ -288,8 +292,11 @@ final class AppState: ObservableObject {
     func restoreSession() async {
         // Demo mode: made-up home, no Ring account, nothing saved.
         if DemoMode.isOn {
-            devices = DemoData.devices
-            events = DemoData.load()
+            allDevices = DemoData.devices
+            devices = CameraVisibility.visible(allDevices)
+            let shown = Set(devices.map(\.id))
+            demoEvents = DemoData.load()
+            events = demoEvents.filter { $0.deviceId.map(shown.contains) ?? true }
             selectedDevice = devices.first
             authState = .authenticated
             return
@@ -328,11 +335,14 @@ final class AppState: ObservableObject {
     func loadData() async {
         NSLog("📡 Loading data...")
         do {
-            devices = try await RingClient.shared.fetchDevices()
+            allDevices = try await RingClient.shared.fetchDevices()
+            devices = CameraVisibility.visible(allDevices)
             EventDirectory.shared.registerDevices(devices)
             NSLog("✅ Loaded \(devices.count) devices: \(devices.map { $0.name })")
 
+            let visibleIds = Set(devices.map(\.id))
             let newEvents = try await RingClient.shared.fetchAllRecentEvents(limit: 50)
+                .filter { $0.deviceId.map(visibleIds.contains) ?? true }
             EventDirectory.shared.register(newEvents)
             NSLog("✅ Loaded \(newEvents.count) events")
             let recent = newEvents.filter { $0.createdAt > Date().addingTimeInterval(-3600) }
@@ -417,6 +427,20 @@ final class AppState: ObservableObject {
                 await Mailbox.shared.check()
                 ParcelStore.shared.link(moments: MomentBuilder.build(from: events), doorbellKeys: doorbells)
             }
+        }
+    }
+
+    /// Show or hide a camera. Hidden cameras stop streaming straight away.
+    func setHidden(_ id: Int, _ hidden: Bool) {
+        CameraVisibility.setHidden(id, hidden)
+        devices = CameraVisibility.visible(allDevices)
+        let shown = Set(devices.map(\.id))
+        events = (DemoMode.isOn ? demoEvents : events).filter { $0.deviceId.map(shown.contains) ?? true }
+        EventDirectory.shared.registerDevices(devices)
+        Task {
+            await MultiStreamManager.shared.stopStreams(except: shown)
+            await RecorderController.shared.sync(devices: devices)
+            if !hidden, !DemoMode.isOn { await loadData() }
         }
     }
 
@@ -579,6 +603,7 @@ struct SettingsView: View {
     var body: some View {
         TabView {
             GeneralSettings()
+                .environmentObject(appState)
                 .tabItem { Label("General", systemImage: "gearshape") }
             IntelligenceSettings()
                 .tabItem { Label("Intelligence", systemImage: "sparkle.magnifyingglass") }
@@ -596,6 +621,43 @@ struct SettingsView: View {
     }
 }
 
+/// Which cameras Doorstep shows, grouped by Ring location (e.g. your home and a shared one).
+private struct CamerasSection: View {
+    @EnvironmentObject var appState: AppState
+
+    private var cameras: [RingDevice] { appState.allDevices.filter { $0.deviceType != .chime } }
+    private var locations: [[RingDevice]] {
+        Dictionary(grouping: cameras, by: \.locationId).values.sorted { $0.count > $1.count }
+    }
+
+    var body: some View {
+        Section {
+            ForEach(Array(locations.enumerated()), id: \.offset) { i, group in
+                if locations.count > 1 {
+                    HStack {
+                        Text(i == 0 ? "Main location" : "Another location").font(.callout.weight(.semibold))
+                        Spacer()
+                        Button(group.allSatisfy { CameraVisibility.isHidden($0.id) } ? "Show all" : "Hide all") {
+                            let hide = !group.allSatisfy { CameraVisibility.isHidden($0.id) }
+                            for d in group { appState.setHidden(d.id, hide) }
+                        }
+                        .controlSize(.small)
+                    }
+                }
+                ForEach(group, id: \.id) { d in
+                    Toggle(d.name, isOn: Binding(
+                        get: { !CameraVisibility.isHidden(d.id) },
+                        set: { appState.setHidden(d.id, !$0) }))
+                }
+            }
+        } header: {
+            Text("Cameras")
+        } footer: {
+            Text("Hidden cameras don't appear anywhere in Doorstep, don't stream and don't send alerts. Handy for a shared location, like a family member's house. They stay in your Ring account.")
+        }
+    }
+}
+
 private struct GeneralSettings: View {
     @EnvironmentObject var appState: AppState
     @AppStorage("pollingInterval") private var pollingInterval: Int = 30
@@ -605,6 +667,7 @@ private struct GeneralSettings: View {
 
     var body: some View {
         Form {
+            CamerasSection()
             Section {
                 Toggle("Show a call window when someone rings", isOn: $callPanelEnabled)
             } footer: {

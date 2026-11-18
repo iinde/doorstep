@@ -30,6 +30,7 @@
 - [How do I turn my porch light on when someone arrives?](#how-do-i-turn-my-porch-light-on-when-someone-arrives)
 - [What is "Ask Claude" and do I need it?](#what-is-ask-claude-and-do-i-need-it)
 - [Can I use it on more than one Mac?](#can-i-use-it-on-more-than-one-mac)
+- [Can I hide some cameras, like a shared location?](#can-i-hide-some-cameras-like-a-shared-location)
 
 **Problems**
 - [A camera says "No picture"](#a-camera-says-no-picture)
@@ -136,6 +137,9 @@ You don't need it. It's an optional extra for when Doorstep can't tell from the 
 
 ### Can I use it on more than one Mac?
 Yes. Install it on each Mac and sign in. Each Mac keeps its own history of who came and its own recordings.
+
+### Can I hide some cameras, like a shared location?
+Yes. **Settings › General › Cameras** lists every camera on your Ring account, grouped by location, with a switch for each (and **Hide all** for a whole location, like a family member's house that's shared with you). Hidden cameras don't appear anywhere in Doorstep, don't stream, and don't send alerts. Switch them back on whenever you like; nothing changes in your Ring account.
 
 ## Problems
 

@@ -9,8 +9,8 @@
 PRODUCT_NAME = OpenRing
 PRODUCT_DISPLAY_NAME = Doorstep
 PRODUCT_BUNDLE_IDENTIFIER = com.openring.app
-MARKETING_VERSION = 0.3.1
-CURRENT_PROJECT_VERSION = 8
+MARKETING_VERSION = 0.3.2
+CURRENT_PROJECT_VERSION = 9
 
 // ==========================================
 // Platform Configuration

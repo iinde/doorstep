@@ -56,6 +56,7 @@ More help: [Getting started](docs/guides/getting-started.md) · [Why the "Open A
 - **The doorbell pops up when someone rings**, like a FaceTime call, with **Hold to talk**.
 - **It sees people walking up**, and shows you the door before they've even rung.
 - **Float any camera** in a little window that stays on top while you work.
+- **Only the cameras you want.** Hide any camera, or a whole shared location, in Settings.
 
 ### Know who it was
 - **Couriers by name.** Doorstep reads "DPD", "Royal Mail", "Amazon", "Evri", "DHL" and more off vans, jackets and bags, so you see *"DPD left a parcel"*, not *"Motion detected"*.

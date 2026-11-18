@@ -152,6 +152,10 @@ public struct PopoverView: View {
                         }
                     )
                     .transition(.opacity)
+                    // Testing: `-DoorstepOpenSettings YES` opens Settings at launch.
+                    .task {
+                        if UserDefaults.standard.bool(forKey: "DoorstepOpenSettings") { openSettings() }
+                    }
                 } else if let device = selectedDevice {
                     FocusView(
                         device: device,
