@@ -66,6 +66,7 @@ More help: [Getting started](docs/guides/getting-started.md) · [Why the "Open A
 - **Number plates** (off unless you switch it on): name your car and Doorstep tells you when it's home.
 - **What visitors said**, written down on your Mac (optional): *"I'll leave it behind the bin."* Searchable.
 - **Local AI** (optional): if you run [Ollama](https://ollama.com), a vision model on your own computer describes every visit. Nothing leaves your home.
+- **Search by what's in the picture** (optional, on your Mac): *"red van"*, *"dog"*, *"man in a hat"*, using Apple's MobileCLIP.
 - **Search your history in plain English**: *"DPD last week"*, *"person at the garden yesterday evening"*, *"knock"*.
 
 ### Parcels, sorted

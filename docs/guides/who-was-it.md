@@ -48,6 +48,11 @@ If you run [Ollama](https://ollama.com) on your Mac (or another computer at home
 
 Local AI is used before the optional Claude check.
 
+## Search by what's in the picture
+Switch it on in **Settings › Intelligence › Picture search** (a one-off download of about 108 MB of Apple's MobileCLIP model from Hugging Face). Doorstep then looks at each visit's picture on your Mac, so you can search for things that aren't written anywhere: *"red van"*, *"dog"*, *"man in a hat"*, *"pushchair"*, *"umbrella"*. Matches appear under **In the picture** in your search results.
+
+It works best in daylight; at night the cameras see in black and white, so colours won't match. History fills in pictures for the last week in the background while it's open.
+
 ## Optional: Ask Claude
 For visits your Mac can't work out, Doorstep can ask Claude, an AI by Anthropic. It sends **three still frames** (never the video or sound) and gets back who it was. It's **off by default**, uses **your own** Anthropic key (billed to you, usually well under a penny per visit), only for doorbell visits with a person in them, and stops at a daily limit you choose. Set it up in **Settings › Intelligence**.
 

@@ -64,6 +64,8 @@ public struct HistoryView: View {
     @State private var timelapseStatus: String?
     @State private var query = ""
     @State private var reelStatus: String?
+    @State private var pictureHits: [String] = []
+    @ObservedObject private var semantic = SemanticModel.shared
     @ObservedObject private var sounds = SoundIndex.shared
     @State private var filter: HistoryFilter = .all
     @State private var camera: Int? = nil   // nil = every camera
@@ -135,6 +137,19 @@ public struct HistoryView: View {
                     learned[key] = await ThumbnailCache.shared.scenery(among: list.map(\.headline.id))
                 }
                 if learned != scenery { withAnimation(DS.crossfade) { scenery = learned } }
+                if semantic.isReady {
+                    // Fetch missing thumbnails for the last week, a few each round, so picture
+                    // search covers visits you haven't scrolled to yet.
+                    let weekAgo = Date().addingTimeInterval(-7 * 86400)
+                    var fetched = 0
+                    for m in allMoments where m.end > weekAgo && fetched < 24 {
+                        if await ThumbnailCache.shared.cached(m.headline.id) == nil {
+                            _ = await ThumbnailCache.shared.thumbnail(for: m.headline.id)
+                            fetched += 1
+                        }
+                    }
+                    await SemanticIndex.shared.index(eventIds: allMoments.map(\.headline.id))
+                }
                 try? await Task.sleep(for: .seconds(20))
             }
         }
@@ -263,6 +278,10 @@ public struct HistoryView: View {
     private var searchResults: some View {
         let search = MomentSearch(query)
         let hits = allMoments.filter { filter.includes($0) && search.matches($0) }
+        let hitIds = Set(hits.map(\.id))
+        // In the picture (MobileCLIP): visits whose thumbnail looks like the words.
+        let looksLike = pictureHits.compactMap { id in allMoments.first { $0.events.contains { $0.id == id } } }
+            .filter { filter.includes($0) && !hitIds.contains($0.id) }
         return ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 VStack(alignment: .leading, spacing: 2) {
@@ -284,11 +303,40 @@ public struct HistoryView: View {
                         .buttonStyle(.plain)
                     }
                 }
+                if !looksLike.isEmpty {
+                    Text("In the picture").font(DS.title).foregroundStyle(DS.paper).padding(.top, 8)
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 168, maximum: 240), spacing: 14)], alignment: .leading, spacing: 18) {
+                        ForEach(looksLike.prefix(60)) { m in
+                            Button { selectedMoment = m.id } label: {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    MomentCard(moment: m, isSelected: m.id == selectedMoment,
+                                               isUnreviewed: m.tier >= .people && !reviews.isReviewed(m),
+                                               scenery: scenery[m.deviceKey] ?? [])
+                                    Text(m.end, format: .dateTime.weekday(.abbreviated).day().month(.abbreviated))
+                                        .font(DS.meta).foregroundStyle(DS.ash)
+                                }
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                } else if !semantic.isReady {
+                    Text("Tip: switch on picture search in Settings › Intelligence to find things like \u{201C}red van\u{201D} or \u{201C}man in a hat\u{201D}.")
+                        .font(DS.meta).foregroundStyle(DS.ash)
+                }
             }
             .padding(20)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .background(DS.night)
+        .task(id: query) {
+            pictureHits = []
+            guard semantic.isReady, !query.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+            try? await Task.sleep(for: .milliseconds(300))   // wait for typing to settle
+            guard !Task.isCancelled else { return }
+            let ids = allMoments.map(\.headline.id)
+            let found = await SemanticIndex.shared.search(query, among: ids, limit: 60)
+            if !Task.isCancelled { pictureHits = found.map(\.eventId) }
+        }
     }
 
     private var summary: String {

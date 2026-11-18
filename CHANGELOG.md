@@ -2,6 +2,9 @@
 
 Full notes for each version are on the [releases page](https://github.com/iinde/doorstep-releases/releases).
 
+## 0.5.1
+- Search by what's in the picture: "red van", "dog", "man in a hat", with Apple's MobileCLIP on your Mac (optional download).
+
 ## 0.5.0
 - Instant alerts: Doorstep receives Ring's push alerts like Ring's own app, so rings pop up straight away.
 - Battery saver: battery cameras show their latest picture until you click them (on by default).
