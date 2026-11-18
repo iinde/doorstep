@@ -131,3 +131,7 @@ gh release view "v$VERSION" --repo "$REPO" >/dev/null 2>&1 && { echo "v$VERSION 
 gh release create "v$VERSION" "$DMG" dist/appcast.xml --repo "$REPO" \
   --title "Doorstep $VERSION" --notes-file "$NOTES_MD" --latest
 echo "▸ Published https://github.com/$REPO/releases/tag/v$VERSION"
+# Also on the source repo, so its Releases sidebar offers the download (no feed there).
+SOURCE_REPO="${DOORSTEP_SOURCE_REPO:-iinde/doorstep}"
+gh release create "v$VERSION" "$DMG" --repo "$SOURCE_REPO" --title "Doorstep $VERSION" --notes-file "$NOTES_MD" --latest \
+  && echo "▸ Also on https://github.com/$SOURCE_REPO/releases/tag/v$VERSION"
