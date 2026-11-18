@@ -6,6 +6,10 @@ import Foundation
 enum RingPushConstants {
     // dgreif/ring packages/ring-client-api/api.ts registerPushReceiver(): the Ring
     // *Android* app's Firebase project, passed to PushReceiver as `firebase`.
+    // Not a secret: Ring's public Firebase client identifier, built into Ring's Android app and
+    // published in dgreif/ring (ring-client-api/api.ts). It identifies Ring's app to Firebase so
+    // we can receive Ring's push alerts; it grants no access to anything. GitHub's secret
+    // scanner flags it; that alert is resolved as "won't fix".
     static let firebaseAPIKey = "AIzaSyCv-hdFBmmdBBJadNy-TFwB-xN_H5m3Bk8"
     static let firebaseProjectId = "ring-17770"
     static let firebaseSenderId = "876313859327" // "for Ring android app. 703521446232 for ring-site"
