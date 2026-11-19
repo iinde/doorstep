@@ -39,7 +39,10 @@ It's free, it's open source, and nothing goes to us. There is no "us": no accoun
 
 ## What's new
 
-**0.5.1** · 18 November 2026
+**0.5.2** · 19 November 2026
+- 🔒 **Locked down.** Doorstep now runs with Apple's hardened runtime, updates only come from its own signed feed, and Settings warns you if your ntfy topic is easy to guess.
+
+**0.5.1**
 - 🔎 **Search by what's in the picture.** Type *"dog"*, *"red van"* or *"man in a hat"* and Doorstep finds visits that look like it, using Apple's MobileCLIP on your Mac.
 
 **0.5.0**

@@ -44,10 +44,10 @@ cp -R "$BUILT" "$STAGE/Doorstep.app"
 APP="$STAGE/Doorstep.app"
 SP="$APP/Contents/Frameworks/Sparkle.framework/Versions/B"
 for item in "$SP/XPCServices/Installer.xpc" "$SP/XPCServices/Downloader.xpc" "$SP/Autoupdate" "$SP/Updater.app"; do
-  [ -e "$item" ] && codesign --force --timestamp=none --preserve-metadata=entitlements --sign "$CERT" "$item"
+  [ -e "$item" ] && codesign --force --timestamp=none --options runtime --preserve-metadata=entitlements --sign "$CERT" "$item"
 done
-for fw in "$APP"/Contents/Frameworks/*.framework; do codesign --force --timestamp=none --sign "$CERT" "$fw"; done
-codesign --force --timestamp=none --sign "$CERT" "$APP"
+for fw in "$APP"/Contents/Frameworks/*.framework; do codesign --force --timestamp=none --options runtime --sign "$CERT" "$fw"; done
+codesign --force --timestamp=none --options runtime --entitlements "$(dirname "$0")/release.entitlements" --sign "$CERT" "$APP"
 codesign --verify --deep --strict "$APP"
 echo "▸ Signed ($(codesign -dv "$APP" 2>&1 | grep -m1 TeamIdentifier))"
 # The thing the colleague crash taught us: never ship the SwiftUI VideoPlayer wrapper.

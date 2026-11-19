@@ -223,6 +223,10 @@ struct PhoneAlertsSection: View {
             case .ntfy:
                 TextField("Topic", text: $ntfyTopic, prompt: Text("doorstep-something-random"))
                 Button("Make a random topic") { ntfyTopic = "doorstep-" + UUID().uuidString.prefix(12).lowercased() }
+                if !ntfyTopic.isEmpty, ntfyTopic.count < 16 {
+                    Label("Anyone who guesses this topic can see your alerts and pictures. Use a long random one.", systemImage: "exclamationmark.triangle")
+                        .font(.caption).foregroundStyle(.orange)
+                }
                 TextField("Server (optional)", text: $ntfyServer, prompt: Text("https://ntfy.sh"))
             case .pushover:
                 SecureField("Your user key", text: $secretA)

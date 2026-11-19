@@ -60,7 +60,11 @@ public final class AppUpdater: NSObject, ObservableObject, SPUStandardUserDriver
     /// feed. The update must still carry Doorstep's EdDSA signature, so this can't sneak
     /// anything in.
     public nonisolated func feedURLString(for updater: SPUUpdater) -> String? {
+        #if DEBUG
         UserDefaults.standard.string(forKey: "DoorstepFeedURL")
+        #else
+        nil
+        #endif
     }
 
     // MARK: Menu bar apps: show scheduled updates gently, in front

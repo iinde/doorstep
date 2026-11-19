@@ -2,6 +2,9 @@
 
 Full notes for each version are on the [releases page](https://github.com/iinde/doorstep-releases/releases).
 
+## 0.5.2
+- Security: hardened runtime, update feed can't be redirected in release builds, warning for guessable ntfy topics.
+
 ## 0.5.1
 - Search by what's in the picture: "red van", "dog", "man in a hat", with Apple's MobileCLIP on your Mac (optional download).
 
