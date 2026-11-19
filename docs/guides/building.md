@@ -33,7 +33,7 @@ cd app/OpenRingPackage && swift test
 | `app/OpenRing` | The app target: menu bar, windows, settings, Siri intents |
 | `app/OpenRingPackage/Sources/RingClient` | Talking to Ring: sign-in, devices, events, clips, live video (WebRTC) |
 | `app/OpenRingPackage/Sources/OpenRingFeature/Wall` | The menu bar Wall, focus view, doorbell panel, brand mark |
-| `.../History` | History window, thumbnails, on-device tagging |
+| `.../History` | History, thumbnails, on-device tagging |
 | `.../Intelligence` | Couriers, teaching, hearing, number plates, search, daily brief, optional Claude |
 | `.../Parcels` | Parcels, email parsing, tracking, Outlook |
 | `.../Recorder` | Live analysis and the on-Mac recorder |
@@ -51,7 +51,7 @@ The design rules (colours, type, motion) are in [docs/DESIGN-BRIEF.md](../DESIGN
 |---|---|
 | `-DoorstepDemo YES` | Demo mode |
 | `-DoorstepDebugWindow YES` | Show the Wall in a normal window (for screenshots) |
-| `-DoorstepCommandCentre YES` | Open the command centre at launch |
+| `-DoorstepCommandCentre YES` | Open the Doorstep window at launch (add `-mainSection History`, `-appearance light`) |
 | `-DoorstepTestCall YES` | Show the doorbell panel |
 | `-DoorstepRecordTest YES` | Force a short recording on each recorded camera |
 | `-DoorstepFeedURL <url>` | Use a different update feed (updates must still be signed) |

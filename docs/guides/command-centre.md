@@ -1,4 +1,19 @@
-# The command centre
+# The Doorstep window
+
+Everything bigger than a quick look lives in one window. Open it with **⌘K**, or with the buttons at the top of the menu bar panel.
+
+![The Doorstep window in light mode](../images/window-light.png)
+
+The rail down the left switches between five sections (**⌘1** to **⌘5**):
+
+- **Live**: every camera at once.
+- **History**: each day's visits, deliveries and recordings, with search. ([Who was it?](who-was-it.md))
+- **Map**, **Radar** and **Insights**: described below.
+
+History plays recordings, so it doesn't keep your cameras awake. The other sections show live video.
+
+**Light or dark.** Doorstep follows your Mac. To choose one yourself, open **Settings › General › Appearance**.
+
 
 Press **⌘K** on the Wall (or click the grid icon) for a full window you can make full screen. It has four views; switch with the buttons at the top or **⌘1** to **⌘4**.
 
@@ -18,7 +33,7 @@ When someone is seen on one camera and then another within a few minutes (drivew
 ## Radar
 Your home in the middle, each camera covering a slice (from where you placed it on the Map). **People your cameras can see right now** show as amber blips: left or right from where they are in the picture, nearer the middle the closer they are to the camera. The last hour's activity shows as fading dots.
 
-Live blips come from cameras that are recording (Settings › Recording) or open in the command centre.
+Live blips come from cameras that are recording (Settings › Recording) or showing in Live.
 
 ## Insights
 Worked out from the last two weeks:
@@ -30,5 +45,5 @@ Worked out from the last two weeks:
 - **Out of the ordinary**: visits at an hour that's rare for that camera.
 
 ## Tips
-- Put the command centre on a second screen, or send it to a TV with AirPlay screen mirroring, for a proper security-desk feel.
+- Put the Doorstep window on a second screen, or send it to a TV with AirPlay screen mirroring, for a proper security-desk feel.
 - It uses more of your Mac's power than the menu bar view. Close it when you don't need it.

@@ -107,7 +107,8 @@ public struct WallView: View {
             ModeMenu()
             todaySummary
             Button {
-                openWindow(id: "command")
+                UserDefaults.standard.set(MainWindow.Section.live.rawValue, forKey: "mainSection")
+                openWindow(id: "main")
                 NSApp.activate(ignoringOtherApps: true)
             } label: {
                 Image(systemName: "rectangle.3.group")
@@ -118,8 +119,8 @@ public struct WallView: View {
             }
             .buttonStyle(.plain)
             .keyboardShortcut("k", modifiers: .command)
-            .help("Command centre (⌘K)")
-            .accessibilityLabel("Command centre")
+            .help("Open Doorstep (⌘K)")
+            .accessibilityLabel("Open Doorstep")
             Button {
                 openWindow(id: "expect")
                 NSApp.activate(ignoringOtherApps: true)
@@ -134,7 +135,8 @@ public struct WallView: View {
             .help("I'm expecting a parcel")
             .accessibilityLabel("I'm expecting a parcel")
             Button {
-                openWindow(id: "history")
+                UserDefaults.standard.set(MainWindow.Section.history.rawValue, forKey: "mainSection")
+                openWindow(id: "main")
                 NSApp.activate(ignoringOtherApps: true)
             } label: {
                 Text("History")
@@ -226,6 +228,7 @@ public struct WallView: View {
             onCloseClip: { stopClip(device.id) }
         )
         .frame(width: tileWidth, height: tileWidth * 9 / 16)
+        .environment(\.colorScheme, .dark)   // text sits on video
     }
 
     // MARK: Expecting

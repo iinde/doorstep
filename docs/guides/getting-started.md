@@ -40,7 +40,7 @@ macOS asks whether Doorstep can send notifications. Say **Allow** so you hear ab
 - Open **History** to see everything that happened today. ([Who was it?](who-was-it.md))
 - Click the **box icon** to tell Doorstep about a parcel you're expecting. ([Parcels](parcels.md))
 - No Ring subscription? Turn on **Settings › Recording**. ([Recording](recording.md))
-- Press **⌘K** for the command centre. ([Command centre](command-centre.md))
+- Press **⌘K** for the Doorstep window: live, history, map, radar and insights. ([The Doorstep window](command-centre.md))
 
 ## Updates
 Doorstep checks for updates every few hours. When there's a new version you'll see what's new and an **Install Update** button. You can also check now from the **gear menu › Check for Updates…**, and change this in **Settings › General › Updates**.

@@ -7,7 +7,7 @@ Click the doorway icon in your menu bar. You'll see:
 - **Expecting** (when a parcel's due today), with **Track** and **Watch door**.
 - **The latest moments**: who came and when. Click one to play it.
 
-Along the top: the time, a one-line summary of today, and buttons for the command centre (⌘K), parcels, **History** (⌘Y) and the **gear menu** (Settings, Check for Updates, Quit).
+Along the top: the time, a one-line summary of today, and buttons for the Doorstep window (⌘K), parcels, **History** (⌘Y) and the **gear menu** (Settings, Check for Updates, Quit).
 
 ## Battery cameras
 With **Battery saver** on (the default, Settings › General), battery cameras show their latest picture on the Wall instead of streaming, with **Click to go live**. Click to watch; it stops again when you close Doorstep. Wired cameras stream as normal.
@@ -43,7 +43,7 @@ If you have a Ring Chime, the **Chimes** section lets you **Snooze** it (1 hour,
 | ⌘` | Open Doorstep from anywhere (change it in Settings) |
 | ⌘1 to ⌘9 | Open that camera |
 | ⌘Y | History |
-| ⌘K | Command centre |
+| ⌘K | The Doorstep window |
 | Esc | Back to all cameras |
 | ← → | Previous or next camera |
 | Hold Space | Talk (when a camera is open) |

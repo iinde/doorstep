@@ -24,17 +24,11 @@ struct OpenRingApp: App {
         }
         .menuBarExtraStyle(.window)
 
-        // History: days, moments, playback
-        Window("History", id: "history") {
-            HistoryView(devices: appState.devices, seedEvents: appState.events)
+        // The one window: live, history, map, radar, insights
+        Window("Doorstep", id: "main") {
+            MainWindow(devices: appState.devices, events: appState.events)
         }
-        .defaultSize(width: 1180, height: 760)
-
-        // Command centre: live, map, radar, insights
-        Window("Command Centre", id: "command") {
-            CommandCentreView(devices: appState.devices, events: appState.events)
-        }
-        .defaultSize(width: 1440, height: 900)
+        .defaultSize(width: 1360, height: 860)
 
         // Draw a camera's zone
         WindowGroup("Zone", id: "zone", for: Int.self) { $id in
@@ -235,6 +229,7 @@ final class AppState: ObservableObject {
         }
         // Try to restore session on launch
         Task {
+            AppearanceSetting.apply()
             NSLog("🚀 Task started for session restore")
             await restoreSession()
             NSLog("🚀 Session restore completed")
@@ -253,10 +248,13 @@ final class AppState: ObservableObject {
                 self.previewWindow = w
             }
             // `-DoorstepCommandCentre YES`: open the command centre in a window for screenshots.
-            if UserDefaults.standard.bool(forKey: "DoorstepCommandCentre") {
-                let host = NSHostingController(rootView: CommandCentreView(devices: self.devices, events: self.events))
+            // First run of the one-window Doorstep: open it once, with the welcome on top.
+            let firstLook = !DemoMode.isOn && !UserDefaults.standard.bool(forKey: "welcomed07") && !self.devices.isEmpty
+            if firstLook { NSApp.activate(ignoringOtherApps: true) }
+            if firstLook || UserDefaults.standard.bool(forKey: "DoorstepCommandCentre") {
+                let host = NSHostingController(rootView: MainWindow(devices: self.devices, events: self.events))
                 let w = NSWindow(contentViewController: host)
-                w.title = (DemoMode.isOn ? "Doorstep" : "Command Centre (debug)")
+                w.title = "Doorstep"
                 w.setContentSize(NSSize(width: 1440, height: 900))
                 w.makeKeyAndOrderFront(nil)
                 self.centreWindow = w
@@ -706,24 +704,32 @@ struct MenuBarIcon: View {
 
 struct SettingsView: View {
     @EnvironmentObject var appState: AppState
+    @AppStorage("settingsTab") private var tab = "General"
 
     var body: some View {
-        TabView {
+        TabView(selection: $tab) {
             GeneralSettings()
                 .environmentObject(appState)
+                .tag("General")
                 .tabItem { Label("General", systemImage: "gearshape") }
             IntelligenceSettings()
+                .tag("Intelligence")
                 .tabItem { Label("Intelligence", systemImage: "sparkle.magnifyingglass") }
             ParcelsSettings()
+                .tag("Parcels")
                 .tabItem { Label("Parcels", systemImage: "shippingbox") }
             RecordingSettings(devices: appState.devices)
+                .tag("Recording")
                 .tabItem { Label("Recording", systemImage: "record.circle") }
             AlertsSettings(devices: appState.devices)
+                .tag("Alerts")
                 .tabItem { Label("Alerts", systemImage: "bell.badge") }
             AutomationsSettings(devices: appState.devices)
+                .tag("Automations")
                 .tabItem { Label("Automations", systemImage: "bolt.horizontal.circle") }
             AccountSettings()
                 .environmentObject(appState)
+                .tag("Account")
                 .tabItem { Label("Account", systemImage: "person.crop.circle") }
         }
         .frame(width: 600)
@@ -842,9 +848,18 @@ private struct GeneralSettings: View {
     @AppStorage("notificationSound") private var notificationSound: Bool = true
     @AppStorage("callPanelEnabled") private var callPanelEnabled: Bool = true
     @AppStorage("globalHotkey") private var globalHotkey: String = "⌘`"
+    @AppStorage("appearance") private var appearance = "system"
 
     var body: some View {
         Form {
+            Section {
+                Picker("Appearance", selection: $appearance) {
+                    Text("Match my Mac").tag("system")
+                    Text("Light").tag("light")
+                    Text("Dark").tag("dark")
+                }
+                .onChange(of: appearance) { _, _ in AppearanceSetting.apply() }
+            }
             CamerasSection()
             Section {
                 Toggle("Show a call window when someone rings", isOn: $callPanelEnabled)
@@ -956,7 +971,6 @@ struct ExpectWindow: View {
     @Environment(\.dismissWindow) private var dismissWindow
     var body: some View {
         ExpectParcelView(onDone: { dismissWindow(id: "expect") })
-            .preferredColorScheme(.dark)
     }
 }
 

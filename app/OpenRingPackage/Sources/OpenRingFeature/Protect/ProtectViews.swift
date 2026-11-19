@@ -274,7 +274,7 @@ struct LoiteringSection: View {
         } header: {
             Text("Loitering")
         } footer: {
-            Text("Works on cameras Doorstep is recording or showing in the command centre, and only inside a camera's zone if it has one.")
+            Text("Works on cameras Doorstep is recording or showing live in the Doorstep window, and only inside a camera's zone if it has one.")
         }
     }
 }

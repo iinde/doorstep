@@ -2,6 +2,11 @@
 
 Full notes for each version are on the [releases page](https://github.com/iinde/doorstep-releases/releases).
 
+## 0.7.0
+- One window: Live, History, Map, Radar and Insights together (⌘1 to ⌘5). The separate History and Command Centre windows are gone.
+- Light mode, dark mode, or match your Mac (Settings › General › Appearance).
+- A welcome screen the first time you open it. Settings reopens on the tab you last used.
+
 ## 0.6.0
 - Say it at the door: type a reply (or pick a saved one) and the Mac says it through the doorbell, with the microphone off.
 - Answer couriers for you (optional): one sentence of yours, said once, when a recognised courier rings.

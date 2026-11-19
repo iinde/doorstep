@@ -578,6 +578,5 @@ struct PopoverPreviewWrapper: View {
 
 #Preview("Popover - Live") {
     PopoverPreviewWrapper()
-        .preferredColorScheme(.dark)
 }
 #endif

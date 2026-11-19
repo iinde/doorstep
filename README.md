@@ -39,7 +39,12 @@ It's free, it's open source, and nothing goes to us. There is no "us": no accoun
 
 ## What's new
 
-**0.6.0** · 19 November 2026
+**0.7.0** · 19 November 2026
+- 🪟 **One window.** Live, History, Map, Radar and Insights now live together, with a rail down the side. No more separate windows.
+- ☀️ **Light mode.** Doorstep follows your Mac, or pick light or dark yourself.
+- 👋 **A proper welcome** that shows you where everything is the first time you open it.
+
+**0.6.0**
 - 🗣 **Say it at the door, without your microphone.** Type a line or pick a saved one and your Mac says it through the doorbell. Answer from a meeting without unmuting anything. [How it works](docs/guides/replies.md)
 - 📦 **Answer couriers for you.** Switch it on and Doorstep tells a recognised courier where to leave your parcel when you can't get to the door.
 
@@ -118,7 +123,7 @@ More help: [Getting started](docs/guides/getting-started.md) · [Why the "Open A
 - **Time-lapse for battery cameras**: a still every few minutes, turned into a video of the day.
 - **Your day in 60 seconds**: one button makes a short video of everyone who came, with times on screen.
 
-### A proper command centre
+### One window for everything
 - **Full screen, every camera** (⌘K).
 - **Map**: your home from above, each camera where it really is, and a trail when someone walks round the house.
 - **Radar**: live blips for people your cameras can see right now.
@@ -194,7 +199,7 @@ Ring's subscription plans add recording and "intelligent" features to your camer
 </tr>
 <tr>
 <td><img src="docs/images/call-panel.png" alt="Doorbell call panel"><br><sub><b>Someone's coming.</b> The door, before they ring.</sub></td>
-<td><img src="docs/images/centre-live.jpg" alt="Command centre live view"><br><sub><b>Command centre.</b> Every camera, full screen.</sub></td>
+<td><img src="docs/images/window-light.png" alt="The Doorstep window in light mode"><br><sub><b>Light or dark.</b> Every camera in one window, whichever you prefer.</sub></td>
 </tr>
 </table>
 

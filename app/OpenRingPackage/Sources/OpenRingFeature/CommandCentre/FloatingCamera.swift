@@ -22,7 +22,7 @@ public final class FloatingCamera {
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         panel.isMovableByWindowBackground = true
         panel.contentAspectRatio = NSSize(width: 16, height: 9)
-        panel.contentView = NSHostingView(rootView: FloatingCameraView(device: device))
+        panel.contentView = NSHostingView(rootView: FloatingCameraView(device: device).environment(\.colorScheme, .dark))
         if let screen = NSScreen.main?.visibleFrame {
             panel.setFrameOrigin(NSPoint(x: screen.maxX - size.width - 20, y: screen.minY + 20 + CGFloat(panels.count) * 230))
         }

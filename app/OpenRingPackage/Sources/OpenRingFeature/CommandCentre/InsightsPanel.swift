@@ -25,7 +25,6 @@ struct InsightsPanel: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 HStack(alignment: .firstTextBaseline) {
-                    Text("Insights").font(.system(size: 22, weight: .semibold)).foregroundStyle(DS.paper)
                     Text("Last \(days) days, worked out on this Mac").font(DS.body).foregroundStyle(DS.ash)
                     Spacer()
                     if model.isLoading { ProgressView().controlSize(.small) }

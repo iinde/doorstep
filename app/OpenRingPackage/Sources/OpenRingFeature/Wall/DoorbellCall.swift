@@ -117,6 +117,7 @@ struct DoorbellCallView: View {
             }
             .frame(height: 184)
             .clipShape(RoundedRectangle(cornerRadius: DS.tileRadius, style: .continuous))
+            .environment(\.colorScheme, .dark)
 
             HStack(spacing: 10) {
                 HStack(spacing: 8) {

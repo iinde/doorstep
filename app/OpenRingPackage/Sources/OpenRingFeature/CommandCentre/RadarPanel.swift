@@ -120,7 +120,7 @@ struct RadarPanel: View {
             row(DS.porchlight, "Someone seen live, right now")
             row(DS.paper, "A person in the last hour")
             row(DS.ash, "Other movement in the last hour")
-            Text("Live blips come from the cameras Doorstep is recording (Settings › Recording) and any camera open in the command centre.")
+            Text("Live blips come from the cameras Doorstep is recording (Settings › Recording) and any camera showing in Live.")
                 .font(DS.meta).foregroundStyle(DS.ash).fixedSize(horizontal: false, vertical: true)
             Spacer()
         }

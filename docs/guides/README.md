@@ -11,7 +11,7 @@ Then, whatever you're interested in:
 - **[Who was it?](who-was-it.md)**: couriers by name, teaching it, knocks and dogs, number plates, search.
 - **[Parcels](parcels.md)**: "I'm expecting a parcel", tracking, delivery emails, rain warnings.
 - **[Recording without a subscription](recording.md)**: your Mac as the recorder, time-lapse, "Your day in 60 seconds".
-- **[The command centre](command-centre.md)**: full screen, map, radar, insights.
+- **[The Doorstep window](command-centre.md)**: live, history, map, radar and insights in one place, light or dark.
 - **[Say it at the door](replies.md)**: type a reply and your Mac says it, saved replies, answering couriers for you.
 - **[Automations and Siri](automations.md)**: porch lights, pausing music, Shortcuts recipes.
 - **[Home Assistant and Homebridge](home-assistant.md)**: Doorstep's smarts in your smart home.

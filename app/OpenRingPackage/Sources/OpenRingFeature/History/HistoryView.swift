@@ -126,7 +126,6 @@ public struct HistoryView: View {
         }
         .toolbar { toolbar }
         .searchable(text: $query, placement: .toolbar, prompt: "Search: DPD last week, knock, parcel left…")
-        .preferredColorScheme(.dark)
         .task { await model.load(devices: devices, seed: seedEvents) }
         .task(id: model.events.count) {
             // Re-learn each camera's scenery every 20s while the window is open,

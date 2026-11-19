@@ -64,7 +64,7 @@ Doorstep lives in the **menu bar** at the top of your screen, not the Dock. Look
 Ring texts (or emails) a six-digit code after your password. Codes expire after a few minutes, so if one fails, go back and sign in again for a fresh one rather than retrying the old code. If you use an authenticator app with Ring, use its current code. If sign-in keeps failing, check you can sign in to the Ring app on your phone with the same email and password.
 
 ### Which Macs does it run on?
-Any Mac with **macOS 14 Sonoma or later**, Apple silicon or Intel. The command centre and recorder are happiest on Apple silicon.
+Any Mac with **macOS 14 Sonoma or later**, Apple silicon or Intel. The main window and recorder are happiest on Apple silicon.
 
 ### Does it work with my camera?
 It's been used with:
@@ -80,7 +80,7 @@ Open Terminal and run:
 ```
 open -a Doorstep --args -DoorstepDemo YES
 ```
-You'll get a made-up home with drawn cameras, two weeks of visits, parcels and the full command centre. Nothing is saved, and nothing is sent anywhere. Quit Doorstep and open it normally to go back.
+You'll get a made-up home with drawn cameras, two weeks of visits, parcels and the full Doorstep window. Nothing is saved, and nothing is sent anywhere. Quit Doorstep and open it normally to go back.
 
 ## Money and accounts
 
