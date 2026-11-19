@@ -1,4 +1,4 @@
-// The README banner: icon, name, promise, and the Wall (from demo mode) on a dusk background.
+// The README banner: icon, name, promise, and the Doorstep window in light and dark (from demo mode) on a dusk background.
 //   swift scripts/brand/render-banner.swift <repo root>
 import AppKit
 let root = URL(fileURLWithPath: CommandLine.arguments.count > 1 ? CommandLine.arguments[1] : ".")
@@ -24,16 +24,21 @@ func text(_ s: String, _ size: CGFloat, _ weight: NSFont.Weight, _ c: NSColor, _
 text("Doorstep", 150, .bold, hex(0xF2EFE9), 160, 330)
 text("Your Ring cameras, on your Mac.\nEvery camera live. Who came. What's coming.", 50, .medium, hex(0xC9C5BE), 166, 370)
 text("Free · Open source · Private by design", 38, .semibold, hex(0xF5B544), 166, 231)
-// The Wall screenshot, tilted slightly with a shadow.
-let wall = NSImage(contentsOf: root.appendingPathComponent("docs/images/wall.png"))!
+// The Doorstep window from demo mode, light behind dark, tilted slightly with a shadow.
 let ctx = NSGraphicsContext.current!.cgContext
-ctx.saveGState()
-ctx.translateBy(x: 1880, y: 560)
-ctx.rotate(by: -0.04)
-let shadow = NSShadow(); shadow.shadowColor = NSColor.black.withAlphaComponent(0.6); shadow.shadowBlurRadius = 60; shadow.shadowOffset = NSSize(width: 0, height: -20); shadow.set()
-let h: CGFloat = 960, w = h * wall.size.width / wall.size.height
-wall.draw(in: NSRect(x: -w / 2, y: -h / 2, width: w, height: h))
-ctx.restoreGState()
+func window(_ name: String, x: CGFloat, y: CGFloat, height h: CGFloat, tilt: CGFloat) {
+    let img = NSImage(contentsOf: root.appendingPathComponent("docs/images/\(name)"))!
+    ctx.saveGState()
+    ctx.translateBy(x: x, y: y)
+    ctx.rotate(by: tilt)
+    let shadow = NSShadow(); shadow.shadowColor = NSColor.black.withAlphaComponent(0.55); shadow.shadowBlurRadius = 60
+    shadow.shadowOffset = NSSize(width: 0, height: -24); shadow.set()
+    let w = h * img.size.width / img.size.height
+    img.draw(in: NSRect(x: -w / 2, y: -h / 2, width: w, height: h))
+    ctx.restoreGState()
+}
+window("window-light.png", x: 1890, y: 700, height: 590, tilt: -0.035)
+window("window-dark.png", x: 1760, y: 430, height: 590, tilt: -0.035)
 NSGraphicsContext.restoreGraphicsState()
 try! rep.representation(using: .png, properties: [:])!.write(to: root.appendingPathComponent("docs/images/banner.png"))
 print("banner written")

@@ -16,13 +16,13 @@ The speech bubble next to the box holds your saved replies. Click one to say it 
 
 ## Saved replies
 
-Open **Settings › Alerts › Say it at the door**. Add the lines you use most, hear any of them on your Mac with the speaker button, and delete the ones you don't want.
+Open **Settings › Replies**. Add the lines you use most, hear any of them on your Mac with the speaker button, and delete the ones you don't want.
 
 The voice is one that's already on your Mac. For a more natural one, open **System Settings › Accessibility › Spoken Content › System Voice › Manage Voices** and download an Enhanced or Premium voice. Doorstep picks the best one you have.
 
 ## Answer couriers for you
 
-This is off until you switch it on, in **Settings › Alerts › Answer couriers for you**.
+This is off until you switch it on, in **Settings › Replies › Answer couriers for you**.
 
 When your doorbell rings and it looks like a delivery, Doorstep says your sentence once, then sends you an alert telling you what it said and to whom.
 

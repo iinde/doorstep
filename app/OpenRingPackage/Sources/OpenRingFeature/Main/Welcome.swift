@@ -42,7 +42,7 @@ struct WelcomeCard: View {
                 SettingsLink { Text("Record on this Mac…") }
                     .simultaneousGesture(TapGesture().onEnded { settingsTab = "Recording" })
                 SettingsLink { Text("Replies and couriers…") }
-                    .simultaneousGesture(TapGesture().onEnded { settingsTab = "Alerts" })
+                    .simultaneousGesture(TapGesture().onEnded { settingsTab = "Replies" })
                 Spacer()
                 Button("Get started", action: onDone)
                     .keyboardShortcut(.defaultAction)

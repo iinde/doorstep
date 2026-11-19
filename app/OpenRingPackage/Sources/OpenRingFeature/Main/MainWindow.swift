@@ -96,6 +96,8 @@ public struct MainWindow: View {
             Task { await MultiStreamManager.shared.removeViewer() }
         }
         .background(shortcuts)
+        // Always a toolbar, so the rail doesn't jump when History brings its own.
+        .toolbar { ToolbarItem(placement: .navigation) { Color.clear.frame(width: 1, height: 1).accessibilityHidden(true) } }
     }
 
     private func syncCameras() async {

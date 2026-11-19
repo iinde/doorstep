@@ -2,6 +2,10 @@
 
 Full notes for each version are on the [releases page](https://github.com/iinde/doorstep-releases/releases).
 
+## 0.7.1
+- Settings: a Replies tab, a shorter Alerts tab, and Account moved into General.
+- The rail no longer shifts on History.
+
 ## 0.7.0
 - One window: Live, History, Map, Radar and Insights together (⌘1 to ⌘5). The separate History and Command Centre windows are gone.
 - Light mode, dark mode, or match your Mac (Settings › General › Appearance).

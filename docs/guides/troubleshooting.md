@@ -36,4 +36,4 @@ Use **Who was it?** in History to correct it; Doorstep learns. At night, names a
 Sorry! Please send a report: open **Console** (in Applications › Utilities) › **Crash Reports**, find the newest **OpenRing** report, and attach it to a [bug report](https://github.com/iinde/doorstep/issues/new?template=bug_report.yml). The report contains no video or passwords.
 
 ### Start completely fresh
-Quit Doorstep, then delete `~/Library/Application Support/Doorstep` and `~/Library/Caches/Doorstep`. To sign out instead, use **Settings › Account › Sign out**.
+Quit Doorstep, then delete `~/Library/Application Support/Doorstep` and `~/Library/Caches/Doorstep`. To sign out instead, use **Settings › General › Sign out**.

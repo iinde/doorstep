@@ -39,7 +39,10 @@ It's free, it's open source, and nothing goes to us. There is no "us": no accoun
 
 ## What's new
 
-**0.7.0** · 19 November 2026
+**0.7.1** · 19 November 2026
+- 🧹 **Tidier Settings.** Replies get their own tab, and your account lives in General.
+
+**0.7.0**
 - 🪟 **One window.** Live, History, Map, Radar and Insights now live together, with a rail down the side. No more separate windows.
 - ☀️ **Light mode.** Doorstep follows your Mac, or pick light or dark yourself.
 - 👋 **A proper welcome** that shows you where everything is the first time you open it.

@@ -55,8 +55,9 @@ struct SayItRow: View {
 }
 
 /// Settings: the lines you can say with one click, and answering couriers for you.
-struct RepliesSection: View {
+public struct RepliesSection: View {
     let doorbells: [RingDevice]
+    public init(doorbells: [RingDevice]) { self.doorbells = doorbells }
     @ObservedObject private var replies = SpokenReplies.shared
     @State private var newLine = ""
     @AppStorage("courierReplyEnabled") private var courier = false
@@ -65,7 +66,7 @@ struct RepliesSection: View {
     @AppStorage("courierReplyExpecting") private var expecting = true
     @AppStorage("courierReplyCouriersOnly") private var couriersOnly = true
 
-    var body: some View {
+    public var body: some View {
         Section {
             ForEach(replies.saved, id: \.self) { line in
                 HStack {

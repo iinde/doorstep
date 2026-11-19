@@ -712,6 +712,12 @@ struct SettingsView: View {
                 .environmentObject(appState)
                 .tag("General")
                 .tabItem { Label("General", systemImage: "gearshape") }
+            AlertsSettings(devices: appState.devices)
+                .tag("Alerts")
+                .tabItem { Label("Alerts", systemImage: "bell.badge") }
+            RepliesSettings(devices: appState.devices)
+                .tag("Replies")
+                .tabItem { Label("Replies", systemImage: "text.bubble") }
             IntelligenceSettings()
                 .tag("Intelligence")
                 .tabItem { Label("Intelligence", systemImage: "sparkle.magnifyingglass") }
@@ -721,17 +727,11 @@ struct SettingsView: View {
             RecordingSettings(devices: appState.devices)
                 .tag("Recording")
                 .tabItem { Label("Recording", systemImage: "record.circle") }
-            AlertsSettings(devices: appState.devices)
-                .tag("Alerts")
-                .tabItem { Label("Alerts", systemImage: "bell.badge") }
             AutomationsSettings(devices: appState.devices)
                 .tag("Automations")
                 .tabItem { Label("Automations", systemImage: "bolt.horizontal.circle") }
-            AccountSettings()
-                .environmentObject(appState)
-                .tag("Account")
-                .tabItem { Label("Account", systemImage: "person.crop.circle") }
         }
+        .onAppear { if tab == "Account" { tab = "General" } }
         .frame(width: 600)
     }
 }
@@ -890,6 +890,7 @@ private struct GeneralSettings: View {
                 Text("⌘1 to ⌘4 open a camera. ⌘Y opens History. Esc goes back.")
             }
             UpdateSettings()
+            AccountSection().environmentObject(appState)
         }
         .formStyle(.grouped)
         .frame(height: 600)
@@ -939,28 +940,32 @@ private struct IntelligenceSettings: View {
     }
 }
 
-private struct AccountSettings: View {
+private struct AccountSection: View {
     @EnvironmentObject var appState: AppState
     @State private var email: String?
 
     var body: some View {
-        Form {
-            Section {
-                LabeledContent("Ring account", value: email ?? "Signed in")
-                LabeledContent("Cameras", value: "\(appState.devices.filter { $0.deviceType != .chime }.count)")
-            } footer: {
-                Text("Doorstep talks directly to Ring. Your sign-in is kept in your Mac's Keychain.")
+        Section {
+            LabeledContent("Ring account", value: email ?? "Signed in")
+            Button("Sign out", role: .destructive) {
+                Task { await appState.logout() }
             }
-            Section {
-                Button("Sign out", role: .destructive) {
-                    Task { await appState.logout() }
-                }
-                .disabled({ if case .authenticated = appState.authState { return false }; return true }())
-            }
+            .disabled({ if case .authenticated = appState.authState { return false }; return true }())
+        } header: {
+            Text("Account")
+        } footer: {
+            Text("Doorstep talks directly to Ring. Your sign-in is kept in your Mac's Keychain.")
         }
-        .formStyle(.grouped)
-        .frame(height: 260)
         .task { email = await RingClient.shared.currentEmail }
+    }
+}
+
+private struct RepliesSettings: View {
+    let devices: [RingDevice]
+    var body: some View {
+        Form { RepliesSection(doorbells: devices.filter { $0.deviceType == .doorbell }) }
+            .formStyle(.grouped)
+            .frame(height: 600)
     }
 }
 

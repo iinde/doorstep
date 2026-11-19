@@ -56,7 +56,7 @@ public struct HistoryView: View {
     @ObservedObject private var tagIndex = TagIndex.shared  // refresh when Vision finds people
     @ObservedObject private var identities = IdentityIndex.shared  // refresh titles when "who" lands
     @ObservedObject private var parcels = ParcelStore.shared
-    @State private var sidebarSel: SidebarItem? = .day(Calendar.current.startOfDay(for: Date()))
+    @State private var sidebarSel: SidebarItem? = UserDefaults.standard.bool(forKey: "DoorstepHistoryParcels") ? .parcels : .day(Calendar.current.startOfDay(for: Date()))
     private var selectedDay: Date? { if case .day(let d) = sidebarSel { return d } else { return nil } }
     @State private var selectedMoment: Moment.ID?
     @State private var selectedLocal: LocalClip.ID?

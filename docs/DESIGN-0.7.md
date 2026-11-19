@@ -14,12 +14,9 @@ Someone opening Doorstep for the first time understands where everything is in t
 5. **Text on video is always light.** Tiles, the doorbell pop-up picture and floating cameras ignore the theme, because video is dark whatever the time of day.
 6. **Amber stays the only accent,** deeper by day (#B8780A) so it reads on paper, brighter at night (#F5B544).
 
-## Still to do in 0.7
-- Check Map, Radar, Insights, Parcels, Settings and sign-in in light mode and fix what's off.
-- Settings diet: fewer, clearer groups; advanced options tucked away.
-- First-run guide.
-- Icon, menu bar glyph and banner refresh against the final look.
-- New README screenshots and guide wording (no more "Command Centre").
+## Done since
+- 0.7.0: light-mode pass, welcome screen, new screenshots and guides.
+- 0.7.1: Settings regrouped (Replies tab, Account into General), rail alignment, new banner. The icon was reviewed and kept.
 
 ## Screens
 Live (light): `docs/design/0.7/live-light.png` · Menu bar (light): `pop-light.png` · History (dark): `hist-dark.png`
