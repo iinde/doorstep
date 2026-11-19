@@ -2,6 +2,10 @@
 
 Full notes for each version are on the [releases page](https://github.com/iinde/doorstep-releases/releases).
 
+## 0.7.2
+- Security: WebRTC updated from M125 to M158.
+- The main window no longer redraws every second; spoken replies can't hang if the call never connects.
+
 ## 0.7.1
 - Settings: a Replies tab, a shorter Alerts tab, and Account moved into General.
 - The rail no longer shifts on History.

@@ -39,7 +39,10 @@ It's free, it's open source, and nothing goes to us. There is no "us": no accoun
 
 ## What's new
 
-**0.7.1** · 19 November 2026
+**0.7.2** · 19 November 2026
+- 🔒 **Up-to-date video engine**, with two years of security fixes, and a lighter main window.
+
+**0.7.1**
 - 🧹 **Tidier Settings.** Replies get their own tab, and your account lives in General.
 
 **0.7.0**

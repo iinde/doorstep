@@ -37,7 +37,6 @@ public struct MainWindow: View {
     @AppStorage("mainSection") private var stored = Section.live.rawValue
     private var section: Section { Section(rawValue: stored) ?? .live }
 
-    @State private var now = Date()
     @State private var watching = false
     @AppStorage("welcomed07") private var welcomed = false
     private var showWelcome: Bool {
@@ -48,7 +47,6 @@ public struct MainWindow: View {
     @ObservedObject private var parcels = ParcelStore.shared
     @ObservedObject private var intel = LiveIntel.shared
     @Environment(\.openWindow) private var openWindow
-    private let clock = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     public init(devices: [RingDevice], events: [RingEvent]) {
         self.devices = devices.filter { $0.deviceType != .chime }
@@ -87,7 +85,6 @@ public struct MainWindow: View {
                 .transition(.opacity)
             }
         }
-        .onReceive(clock) { now = $0 }
         .task(id: section) { await syncCameras() }
         .onDisappear {
             guard watching else { return }
@@ -185,11 +182,14 @@ public struct MainWindow: View {
                 if due > 0 { status("shippingbox.fill", "\(due) due today", DS.porchlight) }
             }
             ModeMenu()
-            VStack(alignment: .trailing, spacing: 0) {
-                Text(now, format: .dateTime.hour().minute())
-                    .font(.system(size: 20, weight: .semibold, design: .rounded).monospacedDigit())
-                    .foregroundStyle(DS.paper)
-                Text(now, format: .dateTime.weekday(.abbreviated).day().month(.abbreviated)).font(DS.meta).foregroundStyle(DS.ash)
+            // Its own once-a-minute clock, so the rest of the window isn't redrawn every second.
+            TimelineView(.everyMinute) { t in
+                VStack(alignment: .trailing, spacing: 0) {
+                    Text(t.date, format: .dateTime.hour().minute())
+                        .font(.system(size: 20, weight: .semibold, design: .rounded).monospacedDigit())
+                        .foregroundStyle(DS.paper)
+                    Text(t.date, format: .dateTime.weekday(.abbreviated).day().month(.abbreviated)).font(DS.meta).foregroundStyle(DS.ash)
+                }
             }
         }
         .padding(.horizontal, 20)

@@ -22,9 +22,11 @@ public final class SpeechAudioDevice: NSObject, RTCAudioDevice, @unchecked Senda
     private var drained: [CheckedContinuation<Void, Never>] = []
 
     /// Queue speech and return when the last sample has gone out.
+    /// If WebRTC isn't capturing (the call never came up), returns at once instead of waiting forever.
     public func play(_ samples: [Int16]) async {
         await withCheckedContinuation { c in
             lock.lock()
+            guard recording else { lock.unlock(); c.resume(); return }
             if cursor > 0 { queue.removeFirst(cursor); cursor = 0 }
             queue += samples
             drained.append(c)

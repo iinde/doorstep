@@ -14,7 +14,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/groue/GRDB.swift.git", from: "7.0.0"),
         .package(url: "https://github.com/nicklockwood/SwiftFormat.git", from: "0.49.0"),
-        .package(url: "https://github.com/stasel/WebRTC.git", from: "125.0.0"),
+        .package(url: "https://github.com/stasel/WebRTC.git", from: "158.0.0"),
         // Auto-updates from GitHub Releases (EdDSA-signed appcast, no server of our own).
         .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.6.0"),
     ],

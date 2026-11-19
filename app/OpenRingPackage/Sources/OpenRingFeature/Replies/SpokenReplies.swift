@@ -136,6 +136,13 @@ public final class SpokenReplies: ObservableObject {
                 return false
             }
             await session.startTalking()
+            // The voice only goes out once WebRTC is pulling audio from us.
+            for _ in 0..<20 where !SpeechAudioDevice.shared.isCapturing { try? await Task.sleep(for: .milliseconds(150)) }
+            guard SpeechAudioDevice.shared.isCapturing else {
+                await session.stop()
+                status = "Couldn't speak at \(device.name)"
+                return false
+            }
             status = "Saying it at \(device.name)…"
             try? await Task.sleep(for: .milliseconds(500))
             await SpeechAudioDevice.shared.play(samples)
