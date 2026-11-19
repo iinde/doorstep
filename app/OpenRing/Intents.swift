@@ -82,6 +82,22 @@ struct SetModeIntent: AppIntent {
     }
 }
 
+struct SayAtDoorIntent: AppIntent {
+    static let title: LocalizedStringResource = "Say at Door"
+    static let description = IntentDescription("Says a sentence through a camera's speaker in your Mac's voice. The microphone stays off.")
+    @Parameter(title: "Say") var text: String
+    @Parameter(title: "Camera") var camera: CameraEntity
+
+    @MainActor
+    func perform() async throws -> some IntentResult & ProvidesDialog {
+        guard let device = EventDirectory.shared.devices.first(where: { $0.id == camera.id }) else {
+            return .result(dialog: "Doorstep couldn't find that camera.")
+        }
+        let said = await SpokenReplies.shared.say(text, on: device)
+        return .result(dialog: said ? "Said at \(device.name)." : "Doorstep couldn't reach \(device.name).")
+    }
+}
+
 struct DoorstepShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(intent: ShowCameraIntent(), phrases: ["Show \(\.$camera) in \(.applicationName)",
@@ -93,6 +109,8 @@ struct DoorstepShortcuts: AppShortcutsProvider {
         AppShortcut(intent: SetModeIntent(), phrases: ["Set \(.applicationName) to \(\.$mode)",
                                                        "Switch \(.applicationName) to \(\.$mode)"],
                     shortTitle: "Set Mode", systemImageName: "house")
+        AppShortcut(intent: SayAtDoorIntent(), phrases: ["Say something at the door in \(.applicationName)"],
+                    shortTitle: "Say at Door", systemImageName: "text.bubble")
         AppShortcut(intent: ParcelsTodayIntent(), phrases: ["Any parcels today in \(.applicationName)"],
                     shortTitle: "Parcels Today", systemImageName: "shippingbox")
     }

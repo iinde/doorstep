@@ -18,7 +18,7 @@ public final class DoorbellCallController {
         let view = DoorbellCallView(device: device, event: event, title: title,
                                     onDismiss: { [weak self] in self?.close() })
         let host = NSHostingView(rootView: view)
-        let size = NSSize(width: 360, height: 300)
+        let size = NSSize(width: 360, height: 358)
         let panel = NSPanel(contentRect: NSRect(origin: .zero, size: size),
                             styleMask: [.nonactivatingPanel, .borderless, .fullSizeContentView],
                             backing: .buffered, defer: false)
@@ -148,9 +148,10 @@ struct DoorbellCallView: View {
                 .accessibilityAddTraits(.isButton)
                 Spacer()
             }
+            SayItRow(device: device)
         }
         .padding(16)
-        .frame(width: 360, height: 300)
+        .frame(width: 360, height: 358)
         .background(Backdrop())
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(.white.opacity(0.08)))

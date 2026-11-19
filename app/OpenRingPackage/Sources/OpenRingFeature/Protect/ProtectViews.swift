@@ -109,6 +109,7 @@ public struct AlertsSettings: View {
                 Text("\"One alert per visit\" updates the same notification as a visit goes on, instead of sending a new one for every clip. \"Unusual activity\" is someone at an hour that's rare for that camera.")
             }
 
+            RepliesSection(doorbells: devices.filter { $0.deviceType == .doorbell })
             LoiteringSection()
             PhoneAlertsSection()
 

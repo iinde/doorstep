@@ -558,6 +558,7 @@ final class AppState: ObservableObject {
             announcedDings.insert(ding.id)
             NSLog("🔔 Doorbell: \(bell.name) rang at \(ding.createdAt)")
             Automations.shared.fire(.doorbell, camera: bell.name, detail: "")
+            Task { await CourierReply.doorbellRang(bell) }
             if UserDefaults.standard.object(forKey: "callPanelEnabled") as? Bool ?? true {
                 DoorbellCallController.shared.show(device: bell, event: ding)
             }
@@ -604,6 +605,7 @@ final class AppState: ObservableObject {
                 pushedDings.insert(key)
                 announcedDings.insert(event.eventId ?? key)
                 Automations.shared.fire(.doorbell, camera: device.name, detail: "")
+                Task { await CourierReply.doorbellRang(device) }
                 if UserDefaults.standard.object(forKey: "callPanelEnabled") as? Bool ?? true {
                     DoorbellCallController.shared.show(device: device, event: nil, title: "Someone's at \(device.name)")
                 }

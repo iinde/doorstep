@@ -77,7 +77,7 @@ public actor LiveViewSession {
     /// Sends audio too (the microphone is in use for the whole session). Only for talking.
     public nonisolated let twoWay: Bool
 
-    public init(deviceId: Int, accessToken: String, hardwareId: String, twoWay: Bool = false) {
+    public init(deviceId: Int, accessToken: String, hardwareId: String, twoWay: Bool = false, speech: Bool = false) {
         self.twoWay = twoWay
         self.deviceId = deviceId
         self.accessToken = accessToken
@@ -91,7 +91,7 @@ public actor LiveViewSession {
         // One WebRTC factory (and one SSL init) for the whole app. Previously each
         // session made its own and called RTCCleanupSSL() in deinit, which tore down
         // SSL under every other live stream and crashed the app.
-        self.factory = SharedWebRTC.factory
+        self.factory = speech ? SharedWebRTC.speechFactory : SharedWebRTC.factory
     }
 
     // MARK: - Public API

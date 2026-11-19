@@ -600,7 +600,7 @@ public enum RingAPIError: Error, LocalizedError, Sendable {
 extension RingClient {
     /// Start a live view session for a device
     /// `twoWay`: also send audio (needs the microphone). Off for watching and recording.
-    public func startLiveView(deviceId: Int, twoWay: Bool = false) async throws -> LiveViewSession {
+    public func startLiveView(deviceId: Int, twoWay: Bool = false, speech: Bool = false) async throws -> LiveViewSession {
         let token = try await getValidAccessToken()
         let hardwareId = try await keychain.getHardwareId()
 
@@ -608,7 +608,8 @@ extension RingClient {
             deviceId: deviceId,
             accessToken: token,
             hardwareId: hardwareId,
-            twoWay: twoWay
+            twoWay: twoWay,
+            speech: speech
         )
     }
 }

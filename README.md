@@ -39,7 +39,11 @@ It's free, it's open source, and nothing goes to us. There is no "us": no accoun
 
 ## What's new
 
-**0.5.2** · 19 November 2026
+**0.6.0** · 19 November 2026
+- 🗣 **Say it at the door, without your microphone.** Type a line or pick a saved one and your Mac says it through the doorbell. Answer from a meeting without unmuting anything. [How it works](docs/guides/replies.md)
+- 📦 **Answer couriers for you.** Switch it on and Doorstep tells a recognised courier where to leave your parcel when you can't get to the door.
+
+**0.5.2**
 - 🔒 **Locked down.** Doorstep now runs with Apple's hardened runtime, updates only come from its own signed feed, and Settings warns you if your ntfy topic is easy to guess.
 
 **0.5.1**
@@ -75,7 +79,7 @@ More help: [Getting started](docs/guides/getting-started.md) · [Why the "Open A
 ### See everything, instantly
 - **Every camera live, side by side**, right from the menu bar. Click one to make it big.
 - **A timeline of your day** under the cameras. Every mark is something that happened; amber means someone rang.
-- **The doorbell pops up the moment someone rings**, like a FaceTime call, with **Hold to talk**. Doorstep receives Ring's push alerts the same way Ring's phone app does, so there's no waiting.
+- **The doorbell pops up the moment someone rings**, like a FaceTime call, with **Hold to talk**, or **type a reply** and your Mac says it for you. Doorstep receives Ring's push alerts the same way Ring's phone app does, so there's no waiting.
 - **It sees people walking up**, and shows you the door before they've even rung.
 - **Float any camera** in a little window that stays on top while you work.
 - **Only the cameras you want.** Hide any camera, or a whole shared location, in Settings.

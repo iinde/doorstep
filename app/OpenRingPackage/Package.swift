@@ -29,8 +29,15 @@ let package = Package(
         .target(
             name: "RingClient",
             dependencies: [
+                "RTCAudioShim",
                 .product(name: "WebRTC", package: "WebRTC")
             ]
+        ),
+
+        // The header WebRTC leaves out on macOS, so speech can stand in for the microphone.
+        .target(
+            name: "RTCAudioShim",
+            dependencies: [.product(name: "WebRTC", package: "WebRTC")]
         ),
 
         // Local Storage (SQLite via GRDB)

@@ -2,6 +2,11 @@
 
 Full notes for each version are on the [releases page](https://github.com/iinde/doorstep-releases/releases).
 
+## 0.6.0
+- Say it at the door: type a reply (or pick a saved one) and the Mac says it through the doorbell, with the microphone off.
+- Answer couriers for you (optional): one sentence of yours, said once, when a recognised courier rings.
+- Say at Door action for Shortcuts and Siri.
+
 ## 0.5.2
 - Security: hardened runtime, update feed can't be redirected in release builds, warning for guessable ntfy topics.
 
