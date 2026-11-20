@@ -85,3 +85,15 @@ extension RingClient {
         _ = try await rawRequest(Self.appAPI + "mode/location/\(locationId)", method: "POST", body: ["mode": mode.rawValue])
     }
 }
+
+extension RingClient {
+    /// How many of each kind of Ring device the account has ("stickup_cams": 3, "base_stations": 1…).
+    /// Alarm base stations and Smart Lighting bridges show up here even though Doorstep can't drive them yet.
+    public func deviceGroupCounts() async -> [String: Int] {
+        guard let json = try? await rawRequest(API.clientsAPI + "ring_devices") else { return [:] }
+        var out: [String: Int] = [:]
+        for (k, v) in json { if let a = v as? [Any] { out[k] = a.count } }
+        return out
+    }
+}
+

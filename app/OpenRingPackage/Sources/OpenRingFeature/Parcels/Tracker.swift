@@ -115,7 +115,7 @@ public enum DeliveryWatch {
             content.body = isActive ? "Doorstep will show you the door when someone arrives." : "Keep an eye on the door."
             if let doorbellId { content.userInfo = ["watchDevice": doorbellId] }
             content.categoryIdentifier = NotificationManager.watchCategory
-            if UserDefaults.standard.object(forKey: "notificationSound") as? Bool ?? true { content.sound = .default }
+            if Busy.alertSound { content.sound = .default }
             try? await UNUserNotificationCenter.current().add(
                 UNNotificationRequest(identifier: "parcel-\(p.id)-\(today)", content: content, trigger: nil))
             NSLog("📦 Reminder: \(content.title)")

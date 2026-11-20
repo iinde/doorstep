@@ -84,7 +84,7 @@ public final class NotificationManager: NSObject, UNUserNotificationCenterDelega
         }
         // The body: a plain sentence describing the clip.
         content.body = VideoDescription.text(for: event, tags: tags)
-        if UserDefaults.standard.object(forKey: "notificationSound") as? Bool ?? true { content.sound = .default }
+        if Busy.alertSound { content.sound = .default }
 
         // Automations and announcements (doorbell presses fire from the faster doorbell watch).
         await MainActor.run {

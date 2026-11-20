@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8B90D1482DEDD44A00FBD189 /* OpenRingFeature in Frameworks */ = {isa = PBXBuildFile; productRef = 8B90D1472DEDD44A00FBD189 /* OpenRingFeature */; };
+		8BD0A1000000000000000012 /* DoorstepWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8BD0A1000000000000000002 /* DoorstepWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -18,12 +19,20 @@
 			remoteGlobalIDString = 8BC2655B2DEDD3F400F279A4;
 			remoteInfo = OpenRing;
 		};
+		8BD0A1000000000000000013 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8BC265542DEDD3F400F279A4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8BD0A1000000000000000001;
+			remoteInfo = DoorstepWidget;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		8B90D14A2DEDD44A00FBD189 /* OpenRingPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = OpenRingPackage; sourceTree = "<group>"; };
 		8BC2655C2DEDD3F400F279A4 /* OpenRing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenRing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BC265742DEDD3F500F279A4 /* OpenRing.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenRing.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8BD0A1000000000000000002 /* DoorstepWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DoorstepWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -34,8 +43,16 @@
 				Release.xcconfig,
 				Shared.xcconfig,
 				Tests.xcconfig,
+				Widget.xcconfig,
 			);
 			target = 8BC2655B2DEDD3F400F279A4 /* OpenRing */;
+		};
+		8BD0A1000000000000000004 /* Exceptions for "DoorstepWidget" folder in "DoorstepWidget" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 8BD0A1000000000000000001 /* DoorstepWidget */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -58,6 +75,14 @@
 			path = OpenRingUITests;
 			sourceTree = "<group>";
 		};
+		8BD0A1000000000000000003 /* DoorstepWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8BD0A1000000000000000004 /* Exceptions for "DoorstepWidget" folder in "DoorstepWidget" target */,
+			);
+			path = DoorstepWidget;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +95,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		8BC265712DEDD3F500F279A4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8BD0A1000000000000000005 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -92,6 +124,7 @@
 				8B90D14A2DEDD44A00FBD189 /* OpenRingPackage */,
 				8B90D1BC2DEE373300FBD189 /* Config */,
 				8BC2655E2DEDD3F400F279A4 /* OpenRing */,
+				8BD0A1000000000000000003 /* DoorstepWidget */,
 				8BC265772DEDD3F500F279A4 /* OpenRingUITests */,
 				8B90D1462DEDD44A00FBD189 /* Frameworks */,
 				8BC2655D2DEDD3F400F279A4 /* Products */,
@@ -103,6 +136,7 @@
 			children = (
 				8BC2655C2DEDD3F400F279A4 /* OpenRing.app */,
 				8BC265742DEDD3F500F279A4 /* OpenRing.xctest */,
+				8BD0A1000000000000000002 /* DoorstepWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -118,10 +152,12 @@
 				8BC265592DEDD3F400F279A4 /* Frameworks */,
 				8BC2655A2DEDD3F400F279A4 /* Resources */,
 				8BC265902DEFF00000000001 /* Embed WebRTC Framework */,
+				8BD0A1000000000000000011 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				8BD0A1000000000000000014 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				8B90D1BC2DEE373300FBD189 /* Config */,
@@ -158,6 +194,28 @@
 			productReference = 8BC265742DEDD3F500F279A4 /* OpenRing.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		8BD0A1000000000000000001 /* DoorstepWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8BD0A1000000000000000008 /* Build configuration list for PBXNativeTarget "DoorstepWidget" */;
+			buildPhases = (
+				8BD0A1000000000000000006 /* Sources */,
+				8BD0A1000000000000000005 /* Frameworks */,
+				8BD0A1000000000000000007 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				8BD0A1000000000000000003 /* DoorstepWidget */,
+			);
+			name = DoorstepWidget;
+			packageProductDependencies = (
+			);
+			productName = DoorstepWidget;
+			productReference = 8BD0A1000000000000000002 /* DoorstepWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -170,6 +228,9 @@
 				ORGANIZATIONNAME = "$(ORGANIZATION_NAME)";
 				TargetAttributes = {
 					8BC2655B2DEDD3F400F279A4 = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					8BD0A1000000000000000001 = {
 						CreatedOnToolsVersion = 16.3;
 					};
 					8BC265732DEDD3F500F279A4 = {
@@ -197,6 +258,7 @@
 			targets = (
 				8BC2655B2DEDD3F400F279A4 /* OpenRing */,
 				8BC265732DEDD3F500F279A4 /* OpenRingUITests */,
+				8BD0A1000000000000000001 /* DoorstepWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -210,6 +272,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		8BC265722DEDD3F500F279A4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8BD0A1000000000000000007 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -233,6 +302,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8BD0A1000000000000000006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -240,6 +316,11 @@
 			isa = PBXTargetDependency;
 			target = 8BC2655B2DEDD3F400F279A4 /* OpenRing */;
 			targetProxy = 8BC265752DEDD3F500F279A4 /* PBXContainerItemProxy */;
+		};
+		8BD0A1000000000000000014 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8BD0A1000000000000000001 /* DoorstepWidget */;
+			targetProxy = 8BD0A1000000000000000013 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -263,6 +344,20 @@
 			shellScript = "# Find and embed the WebRTC framework\nFRAMEWORK_PATH=\"${BUILD_DIR}/../../SourcePackages/artifacts/webrtc/WebRTC/WebRTC.xcframework\"\nDEST_DIR=\"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n\nif [ -d \"$FRAMEWORK_PATH\" ]; then\n    mkdir -p \"$DEST_DIR\"\n    \n    # Select the right architecture\n    if [ \"$PLATFORM_NAME\" = \"macosx\" ]; then\n        ARCH_PATH=\"$FRAMEWORK_PATH/macos-x86_64_arm64/WebRTC.framework\"\n    fi\n    \n    if [ -d \"$ARCH_PATH\" ]; then\n        cp -R \"$ARCH_PATH\" \"$DEST_DIR/\"\n        echo \"Embedded WebRTC.framework from $ARCH_PATH\"\n        \n        # Codesign the embedded framework\n        if [ -n \"$EXPANDED_CODE_SIGN_IDENTITY\" ]; then\n            codesign --force --sign \"$EXPANDED_CODE_SIGN_IDENTITY\" \"$DEST_DIR/WebRTC.framework\"\n        fi\n    else\n        echo \"warning: Could not find WebRTC.framework for architecture\"\n    fi\nelse\n    echo \"warning: WebRTC.xcframework not found at $FRAMEWORK_PATH\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8BD0A1000000000000000011 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				8BD0A1000000000000000012 /* DoorstepWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
 		8BC2657C2DEDD3F500F279A4 /* Debug */ = {
@@ -317,6 +412,24 @@
 			};
 			name = Release;
 		};
+		8BD0A1000000000000000009 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 8B90D1BC2DEE373300FBD189 /* Config */;
+			baseConfigurationReferenceRelativePath = Widget.xcconfig;
+			buildSettings = {
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		8BD0A1000000000000000010 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 8B90D1BC2DEE373300FBD189 /* Config */;
+			baseConfigurationReferenceRelativePath = Widget.xcconfig;
+			buildSettings = {
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -343,6 +456,15 @@
 			buildConfigurations = (
 				8BC265852DEDD3F500F279A4 /* Debug */,
 				8BC265862DEDD3F500F279A4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8BD0A1000000000000000008 /* Build configuration list for PBXNativeTarget "DoorstepWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8BD0A1000000000000000009 /* Debug */,
+				8BD0A1000000000000000010 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

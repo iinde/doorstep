@@ -1,0 +1,11 @@
+// The desktop widget. Inherits the app's version numbers so they always match.
+#include "Shared.xcconfig"
+PRODUCT_NAME = DoorstepWidget
+PRODUCT_BUNDLE_IDENTIFIER = com.openring.app.widget
+INFOPLIST_FILE = DoorstepWidget/Info.plist
+INFOPLIST_KEY_CFBundleDisplayName = Doorstep
+INFOPLIST_KEY_LSUIElement =
+CODE_SIGN_ENTITLEMENTS = DoorstepWidget/DoorstepWidget.entitlements
+ASSETCATALOG_COMPILER_APPICON_NAME =
+SKIP_INSTALL = YES
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks

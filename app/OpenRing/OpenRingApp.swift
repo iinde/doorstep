@@ -196,12 +196,13 @@ final class AppState: ObservableObject {
             guard let self, AlertKind.people.isOn, Modes.shared.allowsAlerts(camera: id),
                   let device = self.devices.first(where: { $0.id == id }) else { return }
             Automations.shared.fire(.loitering, camera: device.name, detail: "\(seconds) seconds")
+            if AwayEscalation.loitered(device, seconds: seconds) { return }
             let c = UNMutableNotificationContent()
             c.title = "Someone's hanging around \(device.name)"
             c.body = "They've been there for \(seconds) seconds."
             c.userInfo = ["watchDevice": id]
             c.categoryIdentifier = NotificationManager.watchCategory
-            if UserDefaults.standard.object(forKey: "notificationSound") as? Bool ?? true { c.sound = .default }
+            if Busy.alertSound { c.sound = .default }
             Task {
                 try? await UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "loiter-\(id)-\(Date().timeIntervalSince1970)", content: c, trigger: nil))
                 await PhoneAlerts.send(title: c.title, body: c.body, image: nil)
@@ -230,6 +231,15 @@ final class AppState: ObservableObject {
         // Try to restore session on launch
         Task {
             AppearanceSetting.apply()
+            WhileYouWereOut.shared.openHistory = {
+                UserDefaults.standard.set(MainWindow.Section.history.rawValue, forKey: "mainSection")
+                self.openMainWindow()
+            }
+            WhileYouWereOut.shared.start()
+            IPCameraStore.shared.startWatching()
+            if UserDefaults.standard.bool(forKey: "DoorstepDeviceGroups") {
+                Task { NSLog("🧭 Ring device groups: \(await RingClient.shared.deviceGroupCounts())") }
+            }
             NSLog("🚀 Task started for session restore")
             await restoreSession()
             NSLog("🚀 Session restore completed")
@@ -270,6 +280,22 @@ final class AppState: ObservableObject {
     // which then refuses new sessions for those cameras until they time out.
 
     private var sigtermSource: DispatchSourceSignal?
+    /// Brings the Doorstep window forward (or opens one) from code with no SwiftUI environment.
+    func openMainWindow() {
+        NSApp.activate(ignoringOtherApps: true)
+        if let w = NSApp.windows.first(where: { $0.title == "Doorstep" && $0.frame.width >= 900 }) {
+            w.makeKeyAndOrderFront(nil)
+            return
+        }
+        let host = NSHostingController(rootView: MainWindow(devices: self.devices, events: self.events))
+        let w = NSWindow(contentViewController: host)
+        w.title = "Doorstep"
+        w.setContentSize(NSSize(width: 1360, height: 860))
+        w.center()
+        w.makeKeyAndOrderFront(nil)
+        self.centreWindow = w
+    }
+
     private var centreWindow: NSWindow?
 
     private func installShutdownHandlers() {
@@ -444,6 +470,7 @@ final class AppState: ObservableObject {
         Modes.shared.ensureDefaults(for: devices)
         Modes.shared.tick()
         Task { await HealthMonitor.shared.check(self.allDevices) }
+        TamperWatch.shared.check(self.allDevices)
         // Home Assistant: cameras (when the list changes), parcels due, current mode.
         let ids = devices.map(\.id)
         if ids != lastBridgeCameras {
@@ -458,6 +485,8 @@ final class AppState: ObservableObject {
         Task { await HomeAssistantBridge.shared.publishParcelsDue(due) }
         let moments = MomentBuilder.build(from: events)
         Task { await RainWatch.shared.check(moments: moments) }
+        Routine.tick(moments: moments)
+        WidgetFeed.update(devices: devices, events: events)
         // Recording on this Mac (no Ring subscription needed) and battery-camera stills.
         Task {
             await RecorderController.shared.sync(devices: devices)
@@ -861,6 +890,7 @@ private struct GeneralSettings: View {
                 .onChange(of: appearance) { _, _ in AppearanceSetting.apply() }
             }
             CamerasSection()
+            IPCamerasSection()
             Section {
                 Toggle("Show a call window when someone rings", isOn: $callPanelEnabled)
             } footer: {

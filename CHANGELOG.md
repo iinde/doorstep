@@ -2,6 +2,12 @@
 
 Full notes for each version are on the [releases page](https://github.com/iinde/doorstep-releases/releases).
 
+## 0.8.0
+- Other cameras (RTSP/ONVIF): live view, network search, person alerts.
+- Ask your door (questions in History search), while-you-were-out card, quiet on calls, instant offline alerts, away-mode escalation (light, spoken warning).
+- Postie routine, bin day reminders, UK bank holidays (GOV.UK).
+- Desktop widget.
+
 ## 0.7.2
 - Security: WebRTC updated from M125 to M158.
 - The main window no longer redraws every second; spoken replies can't hang if the call never connects.

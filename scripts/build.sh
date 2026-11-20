@@ -13,4 +13,10 @@ xcodebuild -project OpenRing.xcodeproj -scheme OpenRing -configuration Debug \
   build 2>&1 | grep -E ' error:|BUILD (SUCCEEDED|FAILED)' | sort -u
 APP=build/Build/Products/Debug/OpenRing.app
 codesign --force --deep --timestamp=none --sign "$CERT" "$APP"
+# The widget must keep its sandbox and app group; then reseal the app with the shared group.
+WIDGET="$APP/Contents/PlugIns/DoorstepWidget.appex"
+if [ -d "$WIDGET" ]; then
+  codesign --force --timestamp=none --entitlements DoorstepWidget/DoorstepWidget.entitlements --sign "$CERT" "$WIDGET"
+  codesign --force --timestamp=none --entitlements ../scripts/release.entitlements --sign "$CERT" "$APP"
+fi
 codesign --verify --deep "$APP" && echo "Signed: $(codesign -dv "$APP" 2>&1 | grep -m1 '^TeamIdentifier=')"

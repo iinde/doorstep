@@ -89,6 +89,7 @@ public struct MainWindow: View {
         .onDisappear {
             guard watching else { return }
             watching = false
+            IPCameraStore.shared.removeViewer()
             LiveAnalysis.shared.unwatchAll()
             Task { await MultiStreamManager.shared.removeViewer() }
         }
@@ -100,9 +101,11 @@ public struct MainWindow: View {
     private func syncCameras() async {
         if section.needsCameras, !watching {
             watching = true
+            IPCameraStore.shared.addViewer()
             await streams.addViewer(devices: BatterySaver.streamable(devices, awake: []))
         } else if !section.needsCameras, watching {
             watching = false
+            IPCameraStore.shared.removeViewer()
             LiveAnalysis.shared.unwatchAll()
             await streams.removeViewer()
         }

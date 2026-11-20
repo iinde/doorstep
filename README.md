@@ -39,7 +39,12 @@ It's free, it's open source, and nothing goes to us. There is no "us": no accoun
 
 ## What's new
 
-**0.7.2** · 19 November 2026
+**0.8.0** · 20 November 2026
+- 📹 **Other cameras.** Reolink, Tapo, Hikvision and most ONVIF/RTSP cameras now show next to your Ring ones. [How](docs/guides/other-cameras.md)
+- 💬 **Ask your door.** "Did DPD come today?" gets a straight answer.
+- 🏠 **Around the house.** While-you-were-out catch-up, quiet on calls, offline alerts, a stepped-up Away mode, post and bin day, and a desktop widget. [All of it](docs/guides/around-the-house.md)
+
+**0.7.2**
 - 🔒 **Up-to-date video engine**, with two years of security fixes, and a lighter main window.
 
 **0.7.1**

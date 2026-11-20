@@ -9,8 +9,8 @@
 PRODUCT_NAME = OpenRing
 PRODUCT_DISPLAY_NAME = Doorstep
 PRODUCT_BUNDLE_IDENTIFIER = com.openring.app
-MARKETING_VERSION = 0.7.2
-CURRENT_PROJECT_VERSION = 17
+MARKETING_VERSION = 0.8.0
+CURRENT_PROJECT_VERSION = 19
 
 // ==========================================
 // Platform Configuration
@@ -39,7 +39,7 @@ INFOPLIST_KEY_LSUIElement = YES
 
 // Privacy prompts. Without the microphone one, macOS terminates the app on Hold to talk.
 INFOPLIST_KEY_NSMicrophoneUsageDescription = Doorstep uses your microphone when you hold to talk to someone at your door.
-INFOPLIST_KEY_NSLocalNetworkUsageDescription = Doorstep checks your local network to find the fastest route to your camera video.
+INFOPLIST_KEY_NSLocalNetworkUsageDescription = Doorstep looks on your home network for your Ring cameras' fastest route and for other cameras you choose to add.
 
 // Updates (Sparkle). The feed is the appcast attached to the newest GitHub release of
 // DOORSTEP_RELEASES_REPO, a public repo that holds only release downloads.

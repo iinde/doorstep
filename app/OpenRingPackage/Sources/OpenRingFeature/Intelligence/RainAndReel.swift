@@ -35,7 +35,7 @@ public actor RainWatch {
         let content = UNMutableNotificationContent()
         content.title = "It's raining on your parcel"
         content.body = "A parcel has been at \(left.deviceName) since \(left.end.formatted(date: .omitted, time: .shortened))."
-        content.sound = .default
+        if Busy.alertSound { content.sound = .default }
         try? await UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "rain-\(left.id)", content: content, trigger: nil))
         NSLog("🌧 Rain warning for parcel at \(left.deviceName)")
     }

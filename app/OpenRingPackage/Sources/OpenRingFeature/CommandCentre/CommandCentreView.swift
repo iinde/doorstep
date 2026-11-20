@@ -11,19 +11,28 @@ struct LiveGrid: View {
     let events: [RingEvent]
     @ObservedObject private var streams = MultiStreamManager.shared
     @ObservedObject private var intel = LiveIntel.shared
+    @ObservedObject private var ip = IPCameraStore.shared
 
     var body: some View {
         GeometryReader { geo in
-            let cols = devices.count <= 1 ? 1 : devices.count <= 4 ? 2 : 3
-            let rows = Int(ceil(Double(devices.count) / Double(cols)))
+            let total = devices.count + ip.cameras.count
+            let cols = total <= 1 ? 1 : total <= 4 ? 2 : 3
+            let rows = Int(ceil(Double(total) / Double(cols)))
             let gap: CGFloat = 12
             let w = (geo.size.width - 48 - gap * CGFloat(cols - 1)) / CGFloat(cols)
             let h = min(w * 9 / 16, (geo.size.height - 48 - gap * CGFloat(rows - 1)) / CGFloat(max(rows, 1)))
             VStack(spacing: gap) {
                 ForEach(0..<rows, id: \.self) { r in
                     HStack(spacing: gap) {
-                        ForEach(devices[(r * cols)..<min(r * cols + cols, devices.count)], id: \.id) { d in
-                            tile(d).frame(width: h * 16 / 9, height: h)
+                        ForEach((r * cols)..<min(r * cols + cols, total), id: \.self) { i in
+                            Group {
+                                if i < devices.count {
+                                    tile(devices[i])
+                                } else if let live = ip.state(ip.cameras[i - devices.count].id) {
+                                    IPCameraTile(camera: ip.cameras[i - devices.count], live: live)
+                                }
+                            }
+                            .frame(width: h * 16 / 9, height: h)
                         }
                     }
                 }

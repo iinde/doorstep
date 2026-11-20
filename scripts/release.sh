@@ -46,6 +46,9 @@ SP="$APP/Contents/Frameworks/Sparkle.framework/Versions/B"
 for item in "$SP/XPCServices/Installer.xpc" "$SP/XPCServices/Downloader.xpc" "$SP/Autoupdate" "$SP/Updater.app"; do
   [ -e "$item" ] && codesign --force --timestamp=none --options runtime --preserve-metadata=entitlements --sign "$CERT" "$item"
 done
+# The desktop widget: sandboxed, sharing a folder with the app.
+[ -d "$APP/Contents/PlugIns/DoorstepWidget.appex" ] && codesign --force --timestamp=none --options runtime \
+  --entitlements "$(dirname "$0")/../app/DoorstepWidget/DoorstepWidget.entitlements" --sign "$CERT" "$APP/Contents/PlugIns/DoorstepWidget.appex"
 for fw in "$APP"/Contents/Frameworks/*.framework; do codesign --force --timestamp=none --options runtime --sign "$CERT" "$fw"; done
 codesign --force --timestamp=none --options runtime --entitlements "$(dirname "$0")/release.entitlements" --sign "$CERT" "$APP"
 codesign --verify --deep --strict "$APP"

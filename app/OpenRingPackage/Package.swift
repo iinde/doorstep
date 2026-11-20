@@ -40,6 +40,9 @@ let package = Package(
             dependencies: [.product(name: "WebRTC", package: "WebRTC")]
         ),
 
+        // IP cameras: RTSP, H.264/H.265 depacketizing and hardware decoding, ONVIF discovery.
+        .target(name: "IPCam", dependencies: []),
+
         // Local Storage (SQLite via GRDB)
         .target(
             name: "Storage",
@@ -54,6 +57,7 @@ let package = Package(
             dependencies: [
                 "DesignSystem",
                 "RingClient",
+                "IPCam",
                 "Storage",
                 .product(name: "Sparkle", package: "Sparkle")
             ]
@@ -61,7 +65,7 @@ let package = Package(
 
         .testTarget(
             name: "OpenRingFeatureTests",
-            dependencies: ["OpenRingFeature", "RingClient"]
+            dependencies: ["OpenRingFeature", "RingClient", "IPCam"]
         ),
     ]
 )

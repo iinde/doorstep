@@ -407,7 +407,7 @@ public class MultiStreamManager: ObservableObject {
     // MARK: - Push-to-Talk
 
     /// Cameras whose session sends audio (microphone open). Only while you're on them.
-    private var talkDevices: Set<Int> = []
+    private var talkDevices: Set<Int> = [] { didSet { Busy.doorstepUsingMic = !talkDevices.isEmpty } }
     @Published public private(set) var connectingMic: Set<Int> = []
     /// Still holding Talk (so a slow reconnect doesn't open the mic after you let go).
     private var talkHeld: Set<Int> = []

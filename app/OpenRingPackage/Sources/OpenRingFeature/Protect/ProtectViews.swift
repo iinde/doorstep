@@ -109,6 +109,8 @@ public struct AlertsSettings: View {
                 Text("\"One alert per visit\" updates the same notification as a visit goes on, instead of sending a new one for every clip. \"Unusual activity\" is someone at an hour that's rare for that camera.")
             }
 
+            QuietAndTamperSection()
+            AwayEscalationSection()
             LoiteringSection()
             PhoneAlertsSection()
 
@@ -257,6 +259,20 @@ struct PhoneAlertsSection: View {
             Text("On your phone")
         } footer: {
             Text("Doorstep's alerts, picture included, on your iPhone or Android. ntfy needs no account: install the ntfy app and subscribe to the same topic (anyone who knows the topic can read it, so keep it random). Pushover and Telegram use your own keys. Only alerts you've chosen above are sent.")
+        }
+    }
+}
+
+/// Settings › Alerts › Calls and offline cameras.
+struct QuietAndTamperSection: View {
+    @AppStorage("quietInCalls") private var quiet = true
+    @AppStorage("tamperAlerts") private var tamper = true
+    var body: some View {
+        Section {
+            Toggle("Keep quiet while I'm on a call", isOn: $quiet)
+            Toggle("Tell me straight away if a camera goes offline", isOn: $tamper)
+        } footer: {
+            Text("On a call means any app is using your microphone or camera. Alerts still appear, without sound, and nothing is said out loud. A camera going offline can mean a flat battery, lost Wi-Fi, or someone unplugging it.")
         }
     }
 }

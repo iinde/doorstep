@@ -53,7 +53,7 @@ public final class Automations: ObservableObject {
     /// Something happened. Runs matching automations (once a minute at most per rule)
     /// and, if switched on, says it out loud.
     public func fire(_ trigger: DoorTrigger, camera: String, detail: String, location: (Double, Double)? = nil) {
-        if UserDefaults.standard.bool(forKey: "speakAnnouncements") && !DemoMode.isOn {
+        if UserDefaults.standard.bool(forKey: "speakAnnouncements") && !DemoMode.isOn && !Busy.inACall {
             let words: String
             switch trigger {
             case .doorbell: words = "Someone's at the door"

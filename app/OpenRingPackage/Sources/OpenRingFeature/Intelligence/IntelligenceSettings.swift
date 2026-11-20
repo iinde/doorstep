@@ -129,6 +129,7 @@ public struct ParcelsSettings: View {
             } header: {
                 Text("Parcels")
             }
+            RoutineSection()
 
             Section {
                 Toggle("Show me the door when a parcel is due and someone arrives", isOn: $deliveryWatch)

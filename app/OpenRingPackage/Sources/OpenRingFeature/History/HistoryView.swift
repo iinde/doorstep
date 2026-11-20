@@ -62,7 +62,7 @@ public struct HistoryView: View {
     @State private var selectedLocal: LocalClip.ID?
     @ObservedObject private var localClips = LocalClipStore.shared
     @State private var timelapseStatus: String?
-    @State private var query = ""
+    @State private var query = DemoMode.isOn ? (UserDefaults.standard.string(forKey: "DoorstepQuery") ?? "") : ""
     @State private var reelStatus: String?
     @State private var pictureHits: [String] = []
     @ObservedObject private var semantic = SemanticModel.shared
@@ -125,7 +125,7 @@ public struct HistoryView: View {
             }
         }
         .toolbar { toolbar }
-        .searchable(text: $query, placement: .toolbar, prompt: "Search: DPD last week, knock, parcel left…")
+        .searchable(text: $query, placement: .toolbar, prompt: "Search or ask: did DPD come today?")
         .task { await model.load(devices: devices, seed: seedEvents) }
         .task(id: model.events.count) {
             // Re-learn each camera's scenery every 20s while the window is open,
@@ -275,8 +275,10 @@ public struct HistoryView: View {
 
     /// Everything matching the search, newest first, across all loaded days.
     private var searchResults: some View {
+        let ask = AskDoor(query)
         let search = MomentSearch(query)
-        let hits = allMoments.filter { filter.includes($0) && search.matches($0) }
+        let hits = ask.map { $0.matches(in: allMoments.filter { filter.includes($0) }) }
+            ?? allMoments.filter { filter.includes($0) && search.matches($0) }
         let hitIds = Set(hits.map(\.id))
         // In the picture (MobileCLIP): visits whose thumbnail looks like the words.
         let looksLike = pictureHits.compactMap { id in allMoments.first { $0.events.contains { $0.id == id } } }
@@ -284,9 +286,15 @@ public struct HistoryView: View {
         return ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("\u{201C}\(query)\u{201D}").font(DS.display).foregroundStyle(DS.paper)
-                    Text(hits.isEmpty ? "Nothing matches in the last \(days.count) days." : hits.count == 1 ? "1 moment" : "\(hits.count) moments")
-                        .font(DS.body).foregroundStyle(DS.ash)
+                    if let ask {
+                        Text("\u{201C}\(query)\u{201D}").font(DS.body).foregroundStyle(DS.ash)
+                        Text(ask.answer(hits, days: days.count)).font(DS.display).foregroundStyle(DS.paper)
+                            .fixedSize(horizontal: false, vertical: true)
+                    } else {
+                        Text("\u{201C}\(query)\u{201D}").font(DS.display).foregroundStyle(DS.paper)
+                        Text(hits.isEmpty ? "Nothing matches in the last \(days.count) days." : hits.count == 1 ? "1 moment" : "\(hits.count) moments")
+                            .font(DS.body).foregroundStyle(DS.ash)
+                    }
                 }
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 168, maximum: 240), spacing: 14)], alignment: .leading, spacing: 18) {
                     ForEach(hits.prefix(120)) { m in
